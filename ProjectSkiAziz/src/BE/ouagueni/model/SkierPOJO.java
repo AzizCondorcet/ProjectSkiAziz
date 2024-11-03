@@ -1,53 +1,55 @@
 package BE.ouagueni.model;
+
+import java.util.Date;
 import java.util.Objects;
 
-public class SkierPOJO {
+public class SkierPOJO extends PersonnePOJO {
     private String niveau;
     private boolean assurance;
-    
-	public SkierPOJO(String niveau, boolean assurance) {
-		super();
-		this.niveau = niveau;
-		this.assurance = assurance;
-	}
-	public SkierPOJO(){};
 
-	public String getNiveau() {
-		return niveau;
-	}
+    public SkierPOJO(int id, String nom, String prenom, Date dateNaissance, String niveau, boolean assurance) {
+        super(id, nom, prenom, dateNaissance);
+        this.niveau = niveau;
+        this.assurance = assurance;
+    }
 
-	public void setNiveau(String niveau) {
-		this.niveau = niveau;
-	}
+    public SkierPOJO() {
+        super(0, "", "", new Date()); // Initialisation par défaut
+    }
 
-	public boolean isAssurance() {
-		return assurance;
-	}
+    public String getNiveau() {
+        return niveau;
+    }
 
-	public void setAssurance(boolean assurance) {
-		this.assurance = assurance;
-	}
+    public void setNiveau(String niveau) {
+        this.niveau = niveau;
+    }
 
-	@Override
-	public String toString() {
-		return "Skier [niveau=" + niveau + ", assurance=" + assurance + "]";
-	}
+    public boolean isAssurance() {
+        return assurance;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(assurance, niveau);
-	}
+    public void setAssurance(boolean assurance) {
+        this.assurance = assurance;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SkierPOJO other = (SkierPOJO) obj;
-		return assurance == other.assurance && Objects.equals(niveau, other.niveau);
-	}
-    
+    @Override
+    public String toString() {
+        return super.toString() + ", Skier [niveau=" + niveau + ", assurance=" + assurance + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), assurance, niveau);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SkierPOJO other = (SkierPOJO) obj;
+        return assurance == other.assurance && Objects.equals(niveau, other.niveau);
+    }
 }
