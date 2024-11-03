@@ -1,4 +1,4 @@
-package model;
+package BE.ouagueni.model;
 
 import java.io.Serializable;
 import java.util.Objects;

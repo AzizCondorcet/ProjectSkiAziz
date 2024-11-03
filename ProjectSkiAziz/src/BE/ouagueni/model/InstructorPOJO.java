@@ -1,4 +1,4 @@
-package model;
+package BE.ouagueni.model;
 
 import java.util.ArrayList;
 import java.util.Date;

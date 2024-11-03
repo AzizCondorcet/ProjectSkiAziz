@@ -1,4 +1,4 @@
-package model;
+package BE.ouagueni.model;
 import java.util.Objects;
 
 public class SkierPOJO {
@@ -10,6 +10,7 @@ public class SkierPOJO {
 		this.niveau = niveau;
 		this.assurance = assurance;
 	}
+	public SkierPOJO(){};
 
 	public String getNiveau() {
 		return niveau;
