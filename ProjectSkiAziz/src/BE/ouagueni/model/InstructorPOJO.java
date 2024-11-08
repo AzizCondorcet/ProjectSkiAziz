@@ -5,6 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import dao.InstructorDAO;
+
+
+// WINDOWS BUILDER ==> CLASSE POJO ==> CLASSE DAO
+// PUIS
+// CLASSE DAO ==> CLASSE POJO ==> WINDOWS BUILDER
+
 public class InstructorPOJO extends PersonnePOJO {
     private int experience;
     private List<String> certifications = new ArrayList<>();
@@ -15,6 +22,10 @@ public class InstructorPOJO extends PersonnePOJO {
 		this.experience = experience;
 		this.certifications = certifications;
 	}
+	public InstructorPOJO()
+	{
+        super(0, "", "", new Date()); 
+    }
 
 	public int getExperience() {
 		return experience;
@@ -59,6 +70,22 @@ public class InstructorPOJO extends PersonnePOJO {
 		InstructorPOJO other = (InstructorPOJO) obj;
 		return Objects.equals(certifications, other.certifications) && experience == other.experience;
 	}
+	// CRUD Methods
+    public static InstructorPOJO getInstructor(int id, InstructorDAO dao) {
+        return dao.find(id);
+    }
+
+    public void addInstructor(InstructorDAO dao) {
+        dao.create(this);
+    }
+
+    public void modifyInstructor(InstructorDAO dao) {
+        dao.update(this);
+    }
+
+    public void deleteInstructor(InstructorDAO dao) {
+        dao.delete(this);
+    }
     
 }
 

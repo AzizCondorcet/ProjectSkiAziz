@@ -15,7 +15,8 @@ public class EcoleConnection {
             String username = "STUDENT03_08"; 
             String password = "changeme"; 
             this.connect = DriverManager.getConnection(url, username, password);
-            if (this.connect != null) {
+            if (this.connect != null) 
+            {
                 System.out.println("Connected to: " + this.connect.getMetaData().getURL());
                 System.out.println("Database User: " + this.connect.getMetaData().getUserName());
                 System.out.println("Connected to database: " + this.connect.getMetaData().getURL());
