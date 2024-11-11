@@ -18,6 +18,13 @@ public abstract class PersonnePOJO implements Serializable {
 		this.dateNaissance = dateNaissance;
 	}
 
+	public PersonnePOJO() {
+		super();
+		this.id = 0;
+		this.nom = "";
+		this.prenom = "";
+		this.dateNaissance = new Date();
+	}
 	public int getId() {
 		return id;
 	}

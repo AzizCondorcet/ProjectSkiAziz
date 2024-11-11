@@ -3,6 +3,9 @@ package BE.ouagueni.model;
 import java.util.Date;
 import java.util.Objects;
 
+import dao.SkierDAO;
+import singleton.EcoleConnection;
+
 public class SkierPOJO extends PersonnePOJO {
     private String niveau;
     private boolean assurance;
@@ -52,4 +55,11 @@ public class SkierPOJO extends PersonnePOJO {
         SkierPOJO other = (SkierPOJO) obj;
         return assurance == other.assurance && Objects.equals(niveau, other.niveau);
     }
+    
+    public static boolean checkIfPersonExists(String name, String surname)
+    {
+        SkierDAO skierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
+        return skierDAO.findByNameAndSurname(name, surname) != null;
+    }
+
 }

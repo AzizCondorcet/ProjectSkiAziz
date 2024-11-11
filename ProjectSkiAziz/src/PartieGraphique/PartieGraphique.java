@@ -1,38 +1,77 @@
 package PartieGraphique;
 
-import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import singleton.EcoleConnection;
-import dao.InstructorDAO;
-import BE.ouagueni.model.InstructorPOJO;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.UIManager;
 
 public class PartieGraphique extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
-    private JTextField instructorIdField;
-    private JTextArea resultArea;
 
-    public static void main(String[] args){
+    public PartieGraphique() {
+        setTitle("Gestion École de Ski");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 500, 400);
+
+        contentPane = new JPanel();
+        contentPane.setLayout(null);
+        contentPane.setBackground(new Color(0xF4F4F9));
+        setContentPane(contentPane);
+
+        JLabel lblTitle = new JLabel("Gestion de l'École de Ski");
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
+        lblTitle.setBounds(100, 30, 300, 40);
+        contentPane.add(lblTitle);
+
+        JButton btnManageAccreditation = new JButton("Gérer Accréditation");
+        btnManageAccreditation.setBounds(150, 100, 200, 40);
+        contentPane.add(btnManageAccreditation);
+
+        JButton btnViewLessons = new JButton("Consulter les types de leçons disponibles");
+        btnViewLessons.setBounds(100, 160, 300, 40);
+        contentPane.add(btnViewLessons);
+
+        JButton btnManageRegistrations = new JButton("Gérer les inscriptions");
+        btnManageRegistrations.setBounds(150, 220, 200, 40);
+        contentPane.add(btnManageRegistrations);
+
+        // Actions sur les boutons (à compléter plus tard)
+        btnManageAccreditation.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Logic pour gérer les accréditations
+                System.out.println("Gestion des accréditations");
+            }
+        });
+
+        btnViewLessons.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Logic pour consulter les leçons
+                System.out.println("Consultation des types de leçons disponibles");
+            }
+        });
+
+        btnManageRegistrations.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Logic pour gérer les inscriptions
+                System.out.println("Gestion des inscriptions");
+            }
+        });
+    }
+
+    public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.put("Label.font", new Font("Arial", Font.BOLD, 12));
-            UIManager.put("Label.foreground", new Color(0x444444));
-            UIManager.put("TextField.font", new Font("Arial", Font.PLAIN, 12));
-            UIManager.put("TextArea.font", new Font("Arial", Font.PLAIN, 12));
-            UIManager.put("Button.font", new Font("Arial", Font.BOLD, 12));
+            UIManager.put("Label.font", new Font("Arial", Font.BOLD, 14));
+            UIManager.put("Label.foreground", new Color(0x333333));
+            UIManager.put("Button.font", new Font("Arial", Font.BOLD, 14));
             UIManager.put("Button.background", new Color(0x5A9));
             UIManager.put("Button.foreground", Color.WHITE);
         } catch (Exception e) {
@@ -47,58 +86,5 @@ public class PartieGraphique extends JFrame {
                 e.printStackTrace();
             }
         });
-    }
-
-    public PartieGraphique() {
-        setTitle("Instructor Information");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 450, 300);
-
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-        contentPane.setLayout(null);
-        contentPane.setBackground(new Color(0xF4F4F9));
-        setContentPane(contentPane);
-
-        JLabel lblEnterId = new JLabel("Enter Instructor ID:");
-        lblEnterId.setBounds(10, 10, 150, 25);
-        contentPane.add(lblEnterId);
-
-        instructorIdField = new JTextField();
-        instructorIdField.setBounds(160, 10, 50, 25);
-        contentPane.add(instructorIdField);
-        instructorIdField.setColumns(10);
-
-        JButton btnShowInstructor = new JButton("Show Instructor");
-        btnShowInstructor.setBounds(220, 10, 150, 25);
-        contentPane.add(btnShowInstructor);
-
-        resultArea = new JTextArea();
-        resultArea.setBounds(10, 50, 400, 200);
-        resultArea.setEditable(false);
-        resultArea.setBorder(BorderFactory.createLineBorder(new Color(0xBBBBBB)));
-        resultArea.setBackground(new Color(0xFFFFFF));
-        contentPane.add(resultArea);
-
-        btnShowInstructor.addActionListener(e -> showInstructorInfo());
-    }
-
-    private void showInstructorInfo() {
-        try {
-            int instructorId = Integer.parseInt(instructorIdField.getText());
-            InstructorDAO instructorDAO = new InstructorDAO(EcoleConnection.getInstance().getConnect());
-            InstructorPOJO instructor = InstructorPOJO.getInstructor(instructorId, instructorDAO);
-
-            if (instructor != null) {
-                resultArea.setText(instructor.toString());
-            } else {
-                resultArea.setText("Instructor not found.");
-            }
-        } catch (NumberFormatException e) {
-            resultArea.setText("Please enter a valid instructor ID.");
-        } catch (Exception e) {
-            resultArea.setText("Error retrieving instructor information.");
-            e.printStackTrace();
-        }
     }
 }

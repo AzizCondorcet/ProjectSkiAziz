@@ -33,8 +33,8 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
     	// a faire
         return false;
     }
-    @Override
-    public InstructorPOJO find(int id) {
+
+    public InstructorPOJO findByNameAndSurname(String name, String surname) {
         InstructorPOJO instructor = null;
         try {
             Statement stmt = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -43,9 +43,8 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
                 "FROM Instructor i " +
                 "LEFT JOIN Instructor_Certification ic ON i.id = ic.instructor_id " +
                 "LEFT JOIN Certification c ON ic.certification_id = c.id " +
-                "WHERE i.id = " + id;
-            
-            System.out.println("Executing query: " + query);
+                "WHERE i.nom = '" + name + "' AND i.prenom = '" + surname + "'";
+
             ResultSet result = stmt.executeQuery(query);
             
             List<String> certifications = new ArrayList<>();
@@ -59,23 +58,32 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
                     instructor.setDateNaissance(result.getDate("dateNaissance"));
                     instructor.setExperience(result.getInt("experience"));
                 }
+
+                // Ajout des certifications à la liste
                 String certificationName = result.getString("certification_name");
                 if (certificationName != null) {
                     certifications.add(certificationName);
                 }
             }
-            
+
             // Assigner la liste de certifications à l'instructeur
             if (instructor != null) {
                 instructor.setCertifications(certifications);
             } else {
-                System.out.println("No instructor found with ID: " + id);
+                System.out.println("No instructor found with name: " + name + " and surname: " + surname);
             }
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return instructor;
     }
+    
+	@Override
+	public InstructorPOJO find(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

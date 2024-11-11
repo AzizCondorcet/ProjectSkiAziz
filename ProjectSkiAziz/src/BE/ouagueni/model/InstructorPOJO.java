@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import dao.InstructorDAO;
+import singleton.EcoleConnection;
 
 
 // WINDOWS BUILDER ==> CLASSE POJO ==> CLASSE DAO
@@ -85,6 +86,11 @@ public class InstructorPOJO extends PersonnePOJO {
 
     public void deleteInstructor(InstructorDAO dao) {
         dao.delete(this);
+    }
+    
+    public static boolean checkIfPersonExists(String name, String surname) {
+        InstructorDAO instructorDAO = new InstructorDAO(EcoleConnection.getInstance().getConnect());
+        return instructorDAO.findByNameAndSurname(name, surname) != null;
     }
     
 }

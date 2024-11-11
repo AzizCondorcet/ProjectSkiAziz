@@ -27,28 +27,31 @@ public class SkierDAO extends DAO_Generique<SkierPOJO> {
 
         return false;
     }
-    @Override
-    public SkierPOJO find(int id) {
-        SkierPOJO skier = null;  
+    public SkierPOJO findByNameAndSurname(String name, String surname) {
+        SkierPOJO skier = null;
         try {
             Statement stmt = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            
-            String query = "SELECT * FROM Skier WHERE id = " + id;
-            System.out.println("Executing query: " + query);
-            
+            String query = "SELECT * FROM Skier WHERE nom = '" + name + "' AND prenom = '" + surname + "'";
             ResultSet result = stmt.executeQuery(query);
-            
-            if (result.next()) { 
+
+            if (result.next()) {
                 skier = new SkierPOJO();
                 skier.setId(result.getInt("id"));
                 skier.setNom(result.getString("nom"));
                 skier.setPrenom(result.getString("prenom"));
-            } else {
-                System.out.println("No skier found with ID: " + id);
+                skier.setDateNaissance(result.getDate("dateNaissance"));
+                skier.setNiveau(result.getString("niveau"));
+                skier.setAssurance(result.getBoolean("assurance"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return skier;
     }
+
+	@Override
+	public SkierPOJO find(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
