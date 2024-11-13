@@ -1,7 +1,12 @@
 package BE.ouagueni.model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
+
+import dao.LessonDAO;
+import dao.SkierDAO;
+import singleton.EcoleConnection;
 
 public class LessonPOJO implements Serializable {
     private int minBookings;
@@ -50,6 +55,9 @@ public class LessonPOJO implements Serializable {
 		LessonPOJO other = (LessonPOJO) obj;
 		return maxBookings == other.maxBookings && minBookings == other.minBookings;
 	}
-    
+	public static List<LessonPOJO> getAllLessons() {
+        LessonDAO lessonDAO = new LessonDAO(EcoleConnection.getInstance().getConnect());
+        return lessonDAO.getAllLessons();
+    }
     
 }
