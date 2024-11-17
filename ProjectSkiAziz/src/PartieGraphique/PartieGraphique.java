@@ -1,14 +1,17 @@
 package PartieGraphique;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import java.util.List;
-
+import BE.ouagueni.model.BookingPOJO;
 import BE.ouagueni.model.LessonPOJO;
 
+import javax.swing.*;
+import javax.swing.border.Border;
+
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 public class PartieGraphique extends JFrame {
 
@@ -33,26 +36,32 @@ public class PartieGraphique extends JFrame {
         lblTitle.setBounds(120, 30, 350, 40);
         contentPane.add(lblTitle);
 
-        // Bouton "Gérer Accréditation"
-        JButton btnManageAccreditation = createButton("Gérer Accréditation", 150, 100);
-        contentPane.add(btnManageAccreditation);
-
-        // Bouton "Consulter les types de leçons disponibles"
-        JButton btnViewLessons = createButton("Consulter les types de leçons", 100, 160);
-        contentPane.add(btnViewLessons);
-
-        // Bouton "Gérer les inscriptions"
-        JButton btnManageRegistrations = createButton("Gérer les inscriptions", 150, 220);
-        contentPane.add(btnManageRegistrations);
+        // Bouton "Afficher les réservations"
+        JButton btnAfficherReservations = createButton("Afficher les réservations", 150, 100);
+        contentPane.add(btnAfficherReservations);
 
         // Bouton "Afficher les leçons"
-        JButton btnAfficherLecons = createButton("Afficher leçons", 150, 280);
+        JButton btnAfficherLecons = createButton("Afficher leçons", 150, 160);
         contentPane.add(btnAfficherLecons);
 
         // Action des boutons
-        btnManageAccreditation.addActionListener(e -> System.out.println("Gestion des accréditations"));
-        btnViewLessons.addActionListener(e -> System.out.println("Consultation des types de leçons disponibles"));
-        btnManageRegistrations.addActionListener(e -> System.out.println("Gestion des inscriptions"));
+        btnAfficherReservations.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                List<BookingPOJO> bookings = BookingPOJO.getAllBookings();
+
+                System.out.println("Affichage de toutes les réservations :");
+                if (bookings.isEmpty()) {
+                    JOptionPane.showMessageDialog(contentPane, "Aucune réservation trouvée.");
+                } else {
+                    StringBuilder message = new StringBuilder("Réservations disponibles:\n");
+                    for (BookingPOJO booking : bookings) {
+                        message.append(booking.toString()).append("\n");
+                    }
+                    JOptionPane.showMessageDialog(contentPane, message.toString());
+                }
+            }
+        });
+
         btnAfficherLecons.addActionListener(e -> {
             List<LessonPOJO> lessons = LessonPOJO.getAllLessons();
 

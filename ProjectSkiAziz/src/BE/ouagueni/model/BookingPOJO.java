@@ -2,7 +2,11 @@ package BE.ouagueni.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+
+import dao.BookingDAO;
+import singleton.EcoleConnection;
 
 public class BookingPOJO implements Serializable {
     private int id;
@@ -63,6 +67,13 @@ public class BookingPOJO implements Serializable {
 		return Objects.equals(dateReservation, other.dateReservation) && id == other.id
 				&& nombreParticipants == other.nombreParticipants;
 	}
+	public static List<BookingPOJO> getAllBookings() {
+        // Création d'une instance de BookingDAO
+        BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
+
+        // Appel de la méthode getAllBookings() du BookingDAO pour récupérer les réservations
+        return bookingDAO.getAllBookings();
+    }
     
 }
 
