@@ -9,15 +9,21 @@ import dao.SkierDAO;
 import singleton.EcoleConnection;
 
 public class LessonPOJO implements Serializable {
+	private int id;
     private int minBookings;
     private int maxBookings;
     
-	public LessonPOJO(int minBookings, int maxBookings) {
+	public LessonPOJO(int id,int minBookings, int maxBookings) {
 		super();
+		this.id=id;
 		this.minBookings = minBookings;
 		this.maxBookings = maxBookings;
 	}
 
+	public int getid() {
+		return id;
+	}
+	
 	public int getMinBookings() {
 		return minBookings;
 	}

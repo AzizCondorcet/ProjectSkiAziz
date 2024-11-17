@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import dao.InstructorDAO;
+import dao.SkierDAO;
 import singleton.EcoleConnection;
 
 
@@ -15,13 +16,10 @@ import singleton.EcoleConnection;
 
 public class InstructorPOJO extends PersonnePOJO {
     private int experience;
-    private List<String> certifications = new ArrayList<>();
     
-	public InstructorPOJO(int id, String nom, String prenom, Date dateNaissance, int experience,
-			List<String> certifications) {
+	public InstructorPOJO(int id, String nom, String prenom, Date dateNaissance, int experience) {
 		super(id, nom, prenom, dateNaissance);
 		this.experience = experience;
-		this.certifications = certifications;
 	}
 	public InstructorPOJO()
 	{
@@ -36,17 +34,9 @@ public class InstructorPOJO extends PersonnePOJO {
 		this.experience = experience;
 	}
 
-	public List<String> getCertifications() {
-		return certifications;
-	}
-
-	public void setCertifications(List<String> certifications) {
-		this.certifications = certifications;
-	}
-
 	@Override
 	public String toString() {
-		return "InstructorPOJO [experience=" + experience + ", certifications=" + certifications + ", getId()="
+		return "InstructorPOJO [experience=" + experience  + ", getId()="
 				+ getId() + ", getNom()=" + getNom() + ", getPrenom()=" + getPrenom() + ", getDateNaissance()="
 				+ getDateNaissance() + ", toString()=" + super.toString() + ", hashCode()=" + hashCode()
 				+ ", getClass()=" + getClass() + "]";
@@ -56,7 +46,7 @@ public class InstructorPOJO extends PersonnePOJO {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(certifications, experience);
+		result = prime * result + Objects.hash(experience);
 		return result;
 	}
 
@@ -69,7 +59,7 @@ public class InstructorPOJO extends PersonnePOJO {
 		if (getClass() != obj.getClass())
 			return false;
 		InstructorPOJO other = (InstructorPOJO) obj;
-		return Objects.equals(certifications, other.certifications) && experience == other.experience;
+		return experience == other.experience;
 	}
 	// CRUD Methods
     public static InstructorPOJO getInstructor(int id, InstructorDAO dao) {
@@ -91,6 +81,10 @@ public class InstructorPOJO extends PersonnePOJO {
     public static boolean checkIfPersonExists(String name, String surname) {
         InstructorDAO instructorDAO = new InstructorDAO(EcoleConnection.getInstance().getConnect());
         return instructorDAO.findByNameAndSurname(name, surname) != null;
+    }
+    public static List<InstructorPOJO> getAllInstructor() {
+    	InstructorDAO instructorDAO = new InstructorDAO(EcoleConnection.getInstance().getConnect());
+        return instructorDAO.getAllInstructors();
     }
     
 }

@@ -1,8 +1,10 @@
 package BE.ouagueni.model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import dao.LessonDAO;
 import dao.SkierDAO;
 import singleton.EcoleConnection;
 
@@ -60,6 +62,10 @@ public class SkierPOJO extends PersonnePOJO {
     {
         SkierDAO skierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
         return skierDAO.findByNameAndSurname(name, surname) != null;
+    }
+    public static List<SkierPOJO> getAllSkier() {
+        SkierDAO SkierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
+        return SkierDAO.getAllSkiers();
     }
 
 }

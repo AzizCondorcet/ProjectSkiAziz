@@ -31,14 +31,15 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
                 connection = EcoleConnection.getInstance().getConnect(); // Réouvrir la connexion si fermée
             }
 
-            PreparedStatement stmt = connection.prepareStatement("SELECT minBookings, maxBookings FROM Lesson");
+            PreparedStatement stmt = connection.prepareStatement("SELECT id ,minBookings, maxBookings FROM Lesson");
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+            	int id = rs.getInt("id");
                 int minBookings = rs.getInt("minBookings");
                 int maxBookings = rs.getInt("maxBookings");
 
-                LessonPOJO lesson = new LessonPOJO(minBookings, maxBookings);
+                LessonPOJO lesson = new LessonPOJO(id,minBookings, maxBookings);
                 lessons.add(lesson);
             }
 

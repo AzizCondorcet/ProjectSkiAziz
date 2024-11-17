@@ -1,6 +1,8 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -66,17 +68,37 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
                 }
             }
 
-            // Assigner la liste de certifications à l'instructeur
-            if (instructor != null) {
-                instructor.setCertifications(certifications);
-            } else {
-                System.out.println("No instructor found with name: " + name + " and surname: " + surname);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return instructor;
+    }
+    
+    public List<InstructorPOJO> getAllInstructors() {
+        List<InstructorPOJO> instructors = new ArrayList<>();
+        String query = "SELECT * FROM Instructor"; // Requête SQL pour récupérer tous les instructeurs
+
+        try (PreparedStatement statement = connect.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            // Parcours des résultats
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String nom = resultSet.getString("nom");
+                String prenom = resultSet.getString("prenom");
+                Date dateNaissance = resultSet.getDate("dateNaissance");
+                int experience = resultSet.getInt("experience");
+
+                // Création de l'objet InstructorPOJO avec les données récupérées
+                InstructorPOJO instructor = new InstructorPOJO(id, nom, prenom, dateNaissance, experience);
+                instructors.add(instructor);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return instructor;
+
+        return instructors; // Retourner la liste des instructeurs
     }
     
 	@Override

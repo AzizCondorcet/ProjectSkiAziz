@@ -2,8 +2,11 @@ package PartieGraphique;
 
 import BE.ouagueni.model.AccreditationPOJO;
 import BE.ouagueni.model.BookingPOJO;
+import BE.ouagueni.model.InstructorPOJO;
 import BE.ouagueni.model.LessonPOJO;
 import BE.ouagueni.model.LessonTypePOJO;
+import BE.ouagueni.model.PeriodPOJO;
+import BE.ouagueni.model.SkierPOJO;
 import dao.AccreditationDAO;
 import dao.LessonTypeDAO;
 
@@ -56,11 +59,79 @@ public class PartieGraphique extends JFrame {
         // Bouton "Delete Accreditation"
         JButton btnDeleteAccreditation = createButton("Delete Accreditation", 150, 280);
         contentPane.add(btnDeleteAccreditation);
-
-       
         
+     // Bouton "Create Booking"
+        JButton btnCreateBooking = createButton("Create Booking", 150, 340);
+        contentPane.add(btnCreateBooking);
+ 
         
         // Action des boutons
+        
+     // Création du bouton pour le Booking
+        btnCreateBooking.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 1. Récupérer les skieurs, instructeurs, leçons et périodes via les POJOs
+                List<SkierPOJO> skiers = SkierPOJO.getAllSkier();  // Appel du POJO pour récupérer les skieurs
+                List<InstructorPOJO> instructors = InstructorPOJO.getAllInstructor();  // Appel du POJO pour récupérer les instructeurs
+                List<LessonPOJO> lessons = LessonPOJO.getAllLessons();  // Appel du POJO pour récupérer les leçons
+                List<PeriodPOJO> periods = PeriodPOJO.getAllPeriod();  // Appel du POJO pour récupérer les périodes
+
+                // Si les listes sont vides, afficher un message d'erreur
+                if (skiers.isEmpty() || instructors.isEmpty() || lessons.isEmpty() || periods.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Impossible de créer un booking. Vérifiez les données.");
+                    return;
+                }
+
+                // 2. Afficher des listes déroulantes pour que l'utilisateur sélectionne les informations
+                String[] skierNames = skiers.stream().map(s -> s.getNom() + " " + s.getPrenom()).toArray(String[]::new);
+                String[] instructorNames = instructors.stream().map(i -> i.getNom() + " " + i.getPrenom()).toArray(String[]::new);
+                String[] lessonID = lessons.stream().map(LessonPOJO::getid).toArray(String[]::new);
+                String[] periodNames = periods.stream().map(p -> p.getStartDate() + " - " + p.getEndDate()).toArray(String[]::new);
+
+                String selectedSkier = (String) JOptionPane.showInputDialog(null,
+                        "Sélectionnez un skieur :", "Créer un booking",
+                        JOptionPane.QUESTION_MESSAGE, null, skierNames, skierNames[0]);
+
+                String selectedInstructor = (String) JOptionPane.showInputDialog(null,
+                        "Sélectionnez un instructeur :", "Créer un booking",
+                        JOptionPane.QUESTION_MESSAGE, null, instructorNames, instructorNames[0]);
+
+                String selectedLesson = (String) JOptionPane.showInputDialog(null,
+                        "Sélectionnez une leçon :", "Créer un booking",
+                        JOptionPane.QUESTION_MESSAGE, null, lessonID, lessonID[0]);
+
+                String selectedPeriod = (String) JOptionPane.showInputDialog(null,
+                        "Sélectionnez une période :", "Créer un booking",
+                        JOptionPane.QUESTION_MESSAGE, null, periodNames, periodNames[0]);
+
+                // 3. Si l'utilisateur a fait des sélections, créez l'objet Booking
+                if (selectedSkier != null && selectedInstructor != null &&
+                    selectedLesson != null && selectedPeriod != null) {
+
+                    SkierPOJO selectedSkierPOJO = skiers.stream().filter(s -> (s.getNom() + " " + s.getPrenom()).equals(selectedSkier)).findFirst().orElse(null);
+                    InstructorPOJO selectedInstructorPOJO = instructors.stream().filter(i -> (i.getNom() + " " + i.getPrenom()).equals(selectedInstructor)).findFirst().orElse(null);
+                    LessonPOJO selectedLessonPOJO = lessons.stream()
+                    	    .filter(l -> l.getid() == Integer.parseInt(selectedLesson)) // On compare les IDs
+                    	    .findFirst()
+                    	    .orElse(null);
+                    PeriodPOJO selectedPeriodPOJO = periods.stream().filter(p -> (p.getStartDate() + " - " + p.getEndDate()).equals(selectedPeriod)).findFirst().orElse(null);
+
+                    // 4. Créer le booking avec les objets sélectionnés
+                    if (selectedSkierPOJO != null && selectedInstructorPOJO != null &&
+                        selectedLessonPOJO != null && selectedPeriodPOJO != null) {
+
+                        // Créer l'objet Booking et le sauvegarder via POJO
+                        BookingPOJO booking = new BookingPOJO(selectedSkierPOJO, selectedInstructorPOJO, selectedLessonPOJO, selectedPeriodPOJO);
+                        booking.createBooking(); // Appel de la méthode POJO qui va interagir avec le DAO pour créer le booking
+
+                        JOptionPane.showMessageDialog(null, "Booking créé avec succès !");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Sélectionnez toutes les informations nécessaires.");
+                    }
+                }
+            }
+        });
         
         btnDeleteAccreditation.addActionListener(new ActionListener() {
             @Override

@@ -2,20 +2,32 @@ package BE.ouagueni.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import dao.PeriodDAO;
+import dao.SkierDAO;
+import singleton.EcoleConnection;
+
 public class PeriodPOJO implements Serializable {
+	private int id;
     private Date startDate;
     private Date endDate;
     private boolean isVacation;
     
-	public PeriodPOJO(Date startDate, Date endDate, boolean isVacation) {
+	public PeriodPOJO(int id,Date startDate, Date endDate, boolean isVacation) {
 		super();
+		this.id=id;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.isVacation = isVacation;
 	}
 
+	public int getid()
+	{
+		return id;
+	}
+	
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -62,6 +74,10 @@ public class PeriodPOJO implements Serializable {
 		return Objects.equals(endDate, other.endDate) && isVacation == other.isVacation
 				&& Objects.equals(startDate, other.startDate);
 	}
+    public static List<PeriodPOJO> getAllPeriod() {
+        PeriodDAO PeriodDAO = new PeriodDAO(EcoleConnection.getInstance().getConnect());
+        return PeriodDAO.getAllPeriod(); 
+    }
     
 }
 
