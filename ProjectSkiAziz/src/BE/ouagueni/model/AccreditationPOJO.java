@@ -1,16 +1,27 @@
 package BE.ouagueni.model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
+
+import dao.AccreditationDAO;
 
 public class AccreditationPOJO implements Serializable {
     private String name;
+    private int id;
     
 	public AccreditationPOJO(String name) {
 		super();
 		this.name = name;
 	}
     
+	public int getId() {
+	    return id;
+	}
+
+	public void setId(int id) {
+	    this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -44,6 +55,21 @@ public class AccreditationPOJO implements Serializable {
 		AccreditationPOJO other = (AccreditationPOJO) obj;
 		return Objects.equals(name, other.name);
 	}
+	public void createAccreditation(int lessonTypeId) {
+        AccreditationDAO accreditationDAO = new AccreditationDAO();
+        accreditationDAO.createAccreditation(this, lessonTypeId); 
+    }
+	public void deleteAccreditation() {
+	    AccreditationDAO accreditationDAO = new AccreditationDAO();
+	    accreditationDAO.deleteAccreditation(this);
+	}
+	
+	// Appeler le DAO pour récupérer les accréditations
+    public static List<AccreditationPOJO> getAllAccreditations() {
+        AccreditationDAO accreditationDAO = new AccreditationDAO();
+        return accreditationDAO.getAllAccreditations();
+    }
+
     
 }
 

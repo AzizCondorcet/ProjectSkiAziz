@@ -1,11 +1,15 @@
 package BE.ouagueni.model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
+
+import dao.LessonTypeDAO;
 
 public class LessonTypePOJO implements Serializable {
     private String level;
     private double price;
+    private int id;
     
 	public LessonTypePOJO(String level, double price) {
 		super();
@@ -13,6 +17,13 @@ public class LessonTypePOJO implements Serializable {
 		this.price = price;
 	}
 
+	public int getId() {
+	    return id;
+	}
+
+	public void setId(int id) {
+	    this.id = id;
+	}
 	public String getLevel() {
 		return level;
 	}
@@ -51,4 +62,8 @@ public class LessonTypePOJO implements Serializable {
 		return Objects.equals(level, other.level)
 				&& Double.doubleToLongBits(price) == Double.doubleToLongBits(other.price);
 	}
+	public static List<LessonTypePOJO> getAllLessonTypes() {
+        LessonTypeDAO lessonTypeDAO = new LessonTypeDAO();
+        return lessonTypeDAO.getAllLessonTypes(); 
+    }
 }

@@ -53,15 +53,61 @@ public class PartieGraphique extends JFrame {
         JButton btnCreateAccreditation = createButton("Create Accreditation", 150, 220);
         contentPane.add(btnCreateAccreditation);
         
+        // Bouton "Delete Accreditation"
+        JButton btnDeleteAccreditation = createButton("Delete Accreditation", 150, 280);
+        contentPane.add(btnDeleteAccreditation);
+
+       
+        
         
         // Action des boutons
+        
+        btnDeleteAccreditation.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 1. Récupérer toutes les accréditations via le POJO
+                List<AccreditationPOJO> accreditations = AccreditationPOJO.getAllAccreditations();
+
+                if (accreditations.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Aucune accréditation à supprimer.");
+                    return;
+                }
+
+                // 2. Afficher une liste déroulante pour choisir une accréditation à supprimer
+                String[] accreditationNames = accreditations.stream()
+                        .map(AccreditationPOJO::getName)
+                        .toArray(String[]::new);
+                String selectedAccreditation = (String) JOptionPane.showInputDialog(
+                        null,
+                        "Sélectionnez une accréditation à supprimer :",
+                        "Supprimer une accréditation",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        accreditationNames,
+                        accreditationNames[0]
+                );
+
+                if (selectedAccreditation != null) {
+                    // 3. Trouver l'accréditation correspondante dans la liste
+                    AccreditationPOJO accreditationToDelete = accreditations.stream()
+                            .filter(a -> a.getName().equals(selectedAccreditation))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (accreditationToDelete != null) {
+                        // 4. Supprimer l'accréditation via le POJO
+                        accreditationToDelete.deleteAccreditation();
+                        JOptionPane.showMessageDialog(null, "Accréditation supprimée avec succès !");
+                    }
+                }
+            }
+        });
         
         btnCreateAccreditation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // 1. Récupérer tous les LessonTypes
-                LessonTypeDAO lessonTypeDAO = new LessonTypeDAO();
-                List<LessonTypePOJO> lessonTypes = lessonTypeDAO.getAllLessonTypes();
+                // 1. Récupérer tous les LessonTypes via POJO
+                List<LessonTypePOJO> lessonTypes = LessonTypePOJO.getAllLessonTypes();
 
                 // Vérification que la liste des LessonTypes n'est pas vide
                 if (lessonTypes.isEmpty()) {
@@ -78,12 +124,12 @@ public class PartieGraphique extends JFrame {
                     String accreditationName = dialog.getAccreditationName();
                     int selectedLessonTypeId = dialog.getSelectedLessonTypeId();
 
-                    // 4. Créer l'accréditation
-                    AccreditationDAO accreditationDAO = new AccreditationDAO();
-                    accreditationDAO.createAccreditation(new AccreditationPOJO(accreditationName), selectedLessonTypeId);
+                    // 4. Créer l'accréditation via POJO
+                    AccreditationPOJO accreditation = new AccreditationPOJO(accreditationName);
+                    accreditation.createAccreditation(selectedLessonTypeId);
 
                     // 5. Afficher un message de confirmation
-                    JOptionPane.showMessageDialog(null, "Accreditation créée avec succès !");
+                    JOptionPane.showMessageDialog(null, "Accréditation créée avec succès !");
                 }
             }
         });
