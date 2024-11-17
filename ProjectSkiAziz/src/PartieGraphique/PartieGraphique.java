@@ -1,7 +1,11 @@
 package PartieGraphique;
 
+import BE.ouagueni.model.AccreditationPOJO;
 import BE.ouagueni.model.BookingPOJO;
 import BE.ouagueni.model.LessonPOJO;
+import BE.ouagueni.model.LessonTypePOJO;
+import dao.AccreditationDAO;
+import dao.LessonTypeDAO;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -43,8 +47,47 @@ public class PartieGraphique extends JFrame {
         // Bouton "Afficher les leçons"
         JButton btnAfficherLecons = createButton("Afficher leçons", 150, 160);
         contentPane.add(btnAfficherLecons);
-
+        contentPane.add(btnAfficherLecons);
+        
+        // Bouton "Create Accreditation"
+        JButton btnCreateAccreditation = createButton("Create Accreditation", 150, 220);
+        contentPane.add(btnCreateAccreditation);
+        
+        
         // Action des boutons
+        
+        btnCreateAccreditation.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 1. Récupérer tous les LessonTypes
+                LessonTypeDAO lessonTypeDAO = new LessonTypeDAO();
+                List<LessonTypePOJO> lessonTypes = lessonTypeDAO.getAllLessonTypes();
+
+                // Vérification que la liste des LessonTypes n'est pas vide
+                if (lessonTypes.isEmpty()) {
+                    JOptionPane.showMessageDialog(contentPane, "Aucun type de leçon disponible.");
+                    return;  // Ne pas continuer si aucun type de leçon
+                }
+
+                // 2. Afficher une nouvelle fenêtre/modale pour saisir le nom et sélectionner un LessonType
+                CreateAccreditationDialog dialog = new CreateAccreditationDialog(lessonTypes);
+                dialog.setVisible(true);
+
+                // 3. Récupérer les données saisies si l'utilisateur confirme
+                if (dialog.isConfirmed()) {
+                    String accreditationName = dialog.getAccreditationName();
+                    int selectedLessonTypeId = dialog.getSelectedLessonTypeId();
+
+                    // 4. Créer l'accréditation
+                    AccreditationDAO accreditationDAO = new AccreditationDAO();
+                    accreditationDAO.createAccreditation(new AccreditationPOJO(accreditationName), selectedLessonTypeId);
+
+                    // 5. Afficher un message de confirmation
+                    JOptionPane.showMessageDialog(null, "Accreditation créée avec succès !");
+                }
+            }
+        });
+        
         btnAfficherReservations.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 List<BookingPOJO> bookings = BookingPOJO.getAllBookings();
