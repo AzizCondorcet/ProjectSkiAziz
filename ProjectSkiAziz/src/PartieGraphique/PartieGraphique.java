@@ -71,6 +71,7 @@ public class PartieGraphique extends JFrame {
         btnCreateBooking.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	System.out.println("++++++++++++++++++++++");
                 // 1. Récupérer les skieurs, instructeurs, leçons et périodes via les POJOs
                 List<SkierPOJO> skiers = SkierPOJO.getAllSkier();  // Appel du POJO pour récupérer les skieurs
                 List<InstructorPOJO> instructors = InstructorPOJO.getAllInstructor();  // Appel du POJO pour récupérer les instructeurs
@@ -82,11 +83,13 @@ public class PartieGraphique extends JFrame {
                     JOptionPane.showMessageDialog(null, "Impossible de créer un booking. Vérifiez les données.");
                     return;
                 }
-
+                System.out.println("----------------------");
                 // 2. Afficher des listes déroulantes pour que l'utilisateur sélectionne les informations
                 String[] skierNames = skiers.stream().map(s -> s.getNom() + " " + s.getPrenom()).toArray(String[]::new);
                 String[] instructorNames = instructors.stream().map(i -> i.getNom() + " " + i.getPrenom()).toArray(String[]::new);
-                String[] lessonID = lessons.stream().map(LessonPOJO::getid).toArray(String[]::new);
+                String[] lessonID = lessons.stream()
+                        .map(lesson -> String.valueOf(lesson.getid()))
+                        .toArray(String[]::new);
                 String[] periodNames = periods.stream().map(p -> p.getStartDate() + " - " + p.getEndDate()).toArray(String[]::new);
 
                 String selectedSkier = (String) JOptionPane.showInputDialog(null,
@@ -121,6 +124,7 @@ public class PartieGraphique extends JFrame {
                     if (selectedSkierPOJO != null && selectedInstructorPOJO != null &&
                         selectedLessonPOJO != null && selectedPeriodPOJO != null) {
 
+                    	System.out.println("999999999999999999");
                         // Créer l'objet Booking et le sauvegarder via POJO
                         BookingPOJO booking = new BookingPOJO(selectedSkierPOJO, selectedInstructorPOJO, selectedLessonPOJO, selectedPeriodPOJO);
                         booking.createBooking(); // Appel de la méthode POJO qui va interagir avec le DAO pour créer le booking

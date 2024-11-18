@@ -9,7 +9,8 @@ import dao.BookingDAO;
 import singleton.EcoleConnection;
 
 public class BookingPOJO implements Serializable {
-    private int id;
+	private static final long serialVersionUID = 1L;
+	private int id;
     private Date dateReservation;
     private int nombreParticipants;
     private SkierPOJO skier;  // Référence à SkierPOJO
@@ -120,6 +121,7 @@ public class BookingPOJO implements Serializable {
         return bookingDAO.getAllBookings();
     }
 	public void createBooking() {
+		System.out.println("555555555555555");
         BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
         bookingDAO.createBooking(this);
     }

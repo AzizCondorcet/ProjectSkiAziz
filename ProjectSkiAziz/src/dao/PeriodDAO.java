@@ -10,19 +10,15 @@ import java.util.List;
 
 public class PeriodDAO extends DAO_Generique<SkierPOJO> {
 
-    // Constructeur
     public PeriodDAO(Connection conn) {
-        super(conn); // Appel du constructeur de la classe parente
+        super(conn); 
     }
 
     // Méthode pour récupérer toutes les périodes
     public List<PeriodPOJO> getAllPeriod() {
         List<PeriodPOJO> periods = new ArrayList<>();
-        if (connect.isClosed()) {
-            connect= EcoleConnection.getInstance().getConnect(); // Réouvrir la connexion si fermée
-        }
-        String query = "SELECT * FROM Period"; // Requête SQL pour récupérer toutes les périodes
-
+        String query = "SELECT * FROM Period"; 
+        
         try (PreparedStatement statement = connect.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
