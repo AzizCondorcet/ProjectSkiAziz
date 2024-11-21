@@ -74,6 +74,10 @@ public class PeriodPOJO implements Serializable {
 		return Objects.equals(endDate, other.endDate) && isVacation == other.isVacation
 				&& Objects.equals(startDate, other.startDate);
 	}
+    public static List<PeriodPOJO> getAllPeriodNotInBooking() {
+        PeriodDAO PeriodDAO = new PeriodDAO(EcoleConnection.getInstance().getConnect());
+        return PeriodDAO.getAllPeriodNotInBooking(); 
+    }
     public static List<PeriodPOJO> getAllPeriod() {
         PeriodDAO PeriodDAO = new PeriodDAO(EcoleConnection.getInstance().getConnect());
         return PeriodDAO.getAllPeriod(); 

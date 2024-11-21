@@ -82,9 +82,13 @@ public class InstructorPOJO extends PersonnePOJO {
         InstructorDAO instructorDAO = new InstructorDAO(EcoleConnection.getInstance().getConnect());
         return instructorDAO.findByNameAndSurname(name, surname) != null;
     }
+    public static List<InstructorPOJO> getAllInstructorNotInBooking() {
+    	InstructorDAO instructorDAO = new InstructorDAO(EcoleConnection.getInstance().getConnect());
+        return instructorDAO.getAllInstructorsNotInBooking();
+    }
     public static List<InstructorPOJO> getAllInstructor() {
     	InstructorDAO instructorDAO = new InstructorDAO(EcoleConnection.getInstance().getConnect());
-        return instructorDAO.getAllInstructors();
+        return instructorDAO.getAllInstructor();
     }
     
 }

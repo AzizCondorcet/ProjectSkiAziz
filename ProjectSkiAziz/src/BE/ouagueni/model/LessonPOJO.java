@@ -10,16 +10,46 @@ import singleton.EcoleConnection;
 
 public class LessonPOJO implements Serializable {
 	private int id;
+	private String name;
     private int minBookings;
     private int maxBookings;
+    private int CurrentBooking;
     
-	public LessonPOJO(int id,int minBookings, int maxBookings) {
+	public LessonPOJO(String name,int id,int minBookings, int maxBookings) {
+		super();
+		this.name=name;
+		this.id=id;
+		this.minBookings = minBookings;
+		this.maxBookings = maxBookings;
+	}
+	public LessonPOJO(String name,int id,int minBookings, int maxBookings,int CurrentBooking) {
+		super();
+		this.name=name;
+		this.id=id;
+		this.minBookings = minBookings;
+		this.maxBookings = maxBookings;
+		this.CurrentBooking= CurrentBooking;
+	}
+
+	public LessonPOJO(int id, int minBookings, int maxBookings)
+	{
 		super();
 		this.id=id;
 		this.minBookings = minBookings;
 		this.maxBookings = maxBookings;
 	}
-
+	public int getCurrentBooking() {
+		return CurrentBooking;
+	}
+	public String getname() {
+		return name;
+	}
+	public void SetCurrentBooking(int CurrentBooking) {
+		this.CurrentBooking= CurrentBooking;
+	}
+	public void Setname(String name) {
+		this.name=name;
+	}
 	public int getid() {
 		return id;
 	}
@@ -42,8 +72,13 @@ public class LessonPOJO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "LessonPOJO [minBookings=" + minBookings + ", maxBookings=" + maxBookings + "]";
+	    return "Leçon : " + name + "\n" +
+	           "ID : " + id + "\n" +
+	           "Réservations actuelles : " + CurrentBooking + "\n" +
+	           "Nombre minimum de réservations : " + minBookings + "\n" +
+	           "Nombre maximum de réservations : " + maxBookings + "\n";
 	}
+
 
 	@Override
 	public int hashCode() {
@@ -61,9 +96,17 @@ public class LessonPOJO implements Serializable {
 		LessonPOJO other = (LessonPOJO) obj;
 		return maxBookings == other.maxBookings && minBookings == other.minBookings;
 	}
+	public static List<LessonPOJO> getAllLessonsNotInBooking() {
+        LessonDAO lessonDAO = new LessonDAO(EcoleConnection.getInstance().getConnect());
+        return lessonDAO.getAllLessonsNotInBooking();
+    }
 	public static List<LessonPOJO> getAllLessons() {
         LessonDAO lessonDAO = new LessonDAO(EcoleConnection.getInstance().getConnect());
         return lessonDAO.getAllLessons();
     }
+	public static List<LessonPOJO> getAvailableLessons(){
+		LessonDAO lessonDAO = new LessonDAO(EcoleConnection.getInstance().getConnect());
+		return lessonDAO.getAvailableLessons();
+	}
     
 }

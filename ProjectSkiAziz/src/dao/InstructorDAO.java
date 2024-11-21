@@ -74,9 +74,18 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
         return instructor;
     }
     
-    public List<InstructorPOJO> getAllInstructors() {
+    
+    public List<InstructorPOJO> getAllInstructorsNotInBooking() {
         List<InstructorPOJO> instructors = new ArrayList<>();
-        String query = "SELECT * FROM Instructor"; // Requête SQL pour récupérer tous les instructeurs
+        String query = """
+                SELECT * 
+                FROM Instructor i
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM Booking b
+                    WHERE b.instructor_id = i.id
+                )
+            """;
 
         try (PreparedStatement statement = connect.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
@@ -98,6 +107,32 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
             e.printStackTrace();
         }
 
+        return instructors; // Retourner la liste des instructeurs
+    }
+    
+    public List<InstructorPOJO> getAllInstructor() {
+        List<InstructorPOJO> instructors = new ArrayList<>();
+        String query = "SELECT * FROM Instructor i";
+
+        try (PreparedStatement statement = connect.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            // Parcours des résultats
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String nom = resultSet.getString("nom");
+                String prenom = resultSet.getString("prenom");
+                Date dateNaissance = resultSet.getDate("dateNaissance");
+                int experience = resultSet.getInt("experience");
+
+                // Création de l'objet InstructorPOJO avec les données récupérées
+                InstructorPOJO instructor = new InstructorPOJO(id, nom, prenom, dateNaissance, experience);
+                instructors.add(instructor);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return instructors; // Retourner la liste des instructeurs
     }
     

@@ -20,7 +20,7 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
     // Méthode pour récupérer toutes les réservations
     public List<BookingPOJO> getAllBookings() {
         List<BookingPOJO> bookings = new ArrayList<>();
-        String query = "SELECT id, dateReservation, nombreParticipants FROM Booking";
+        String query = "SELECT id, dateReservation, nombreParticipants,nomBooking FROM Booking";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) { // Utilisez le champ `connection` ici
             ResultSet rs = stmt.executeQuery();
@@ -28,8 +28,9 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
                 int id = rs.getInt("id");
                 Date dateReservation = rs.getDate("dateReservation");
                 int nombreParticipants = rs.getInt("nombreParticipants");
+                String NomBooking = rs.getString("nomBooking");
 
-                BookingPOJO booking = new BookingPOJO(id, dateReservation, nombreParticipants);
+                BookingPOJO booking = new BookingPOJO(id, dateReservation, nombreParticipants,NomBooking);
                 bookings.add(booking);
             }
         } catch (SQLException e) {
@@ -49,19 +50,21 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
         System.out.println("Skier ID: " + booking.getSkier().getId());
         System.out.println("Period ID: " + booking.getPeriod().getid());
         System.out.println("Instructor ID: " + booking.getInstructor().getId());
-
-        String query = "INSERT INTO Booking (id, dateReservation, nombreParticipants, lesson_id, instructor_id, skier_id, period_id) " +
-                "VALUES (booking_seq.NEXTVAL, ?, ?, ?, ?, ?, ?)";
+        System.out.println("Nom du booking: " + booking.getNomBooking());
+        
+        String query = "INSERT INTO Booking (id ,nomBooking, dateReservation, nombreParticipants, lesson_id, instructor_id, skier_id, period_id) " +
+                "VALUES (booking_seq.NEXTVAL, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setDate(1, new java.sql.Date(booking.getDateReservation().getTime())); // Date valide
-            stmt.setInt(2, booking.getNombreParticipants()); // Vérifiez que c'est bien un int
-
+        	stmt.setString(1, booking.getNomBooking()); // Index 1 : nomBooking
+        	stmt.setDate(2, new java.sql.Date(booking.getDateReservation().getTime())); // Index 2 : dateReservation
+        	stmt.setInt(3, booking.getNombreParticipants()); // Index 3 : nombreParticipants
+        	
             // Validez les IDs avant de les insérer
-            validateAndSetInt(stmt, 3, booking.getLesson().getid(), "lesson_id");
-            validateAndSetInt(stmt, 4, booking.getInstructor().getId(), "instructor_id");
-            validateAndSetInt(stmt, 5, booking.getSkier().getId(), "skier_id");
-            validateAndSetInt(stmt, 6, booking.getPeriod().getid(), "period_id");
+            validateAndSetInt(stmt, 4, booking.getLesson().getid(), "lesson_id");
+            validateAndSetInt(stmt, 5, booking.getInstructor().getId(), "instructor_id");
+            validateAndSetInt(stmt, 6, booking.getSkier().getId(), "skier_id");
+            validateAndSetInt(stmt, 7, booking.getPeriod().getid(), "period_id");
 
             // Exécuter la requête
             int affectedRows = stmt.executeUpdate();
@@ -82,6 +85,7 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
             e.printStackTrace();
         }
     }
+    
 
     // Méthode pour valider et définir un paramètre entier
     private void validateAndSetInt(PreparedStatement stmt, int index, Object value, String fieldName) throws SQLException {
@@ -91,6 +95,34 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
         } catch (NumberFormatException e) {
             throw new SQLException("Invalid value for " + fieldName + ": " + value, e);
         }
+    }
+    public boolean AddBookingWithId(int idSkier, int idLesson, int idInstructeur, int idPeriod) {
+        // Récupérer la connexion
+        Connection connection = EcoleConnection.getInstance().getConnect();
+        System.out.println("AddBookingWithId");
+        
+        // Définir la requête d'insertion dans la table Booking
+        String query = "INSERT INTO Booking (dateReservation, nombreParticipants, lesson_id, instructor_id, skier_id, period_id) " +
+                       "VALUES (SYSDATE, 1, ?, ?, ?, ?)"; // SYSDATE pour la date actuelle, nombreParticipants à 1 par défaut
+        
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            // Ajouter les paramètres à la requête
+            stmt.setInt(1, idLesson);      // lesson_id
+            stmt.setInt(2, idInstructeur); // instructor_id
+            stmt.setInt(3, idSkier);       // skier_id
+            stmt.setInt(4, idPeriod);      // period_id
+            
+            // Exécuter la requête
+            int affectedRows = stmt.executeUpdate();
+            
+            // Vérifier si l'insertion a été effectuée avec succès
+            if (affectedRows > 0) {
+                return true; // Si au moins une ligne est affectée, l'insertion est réussie
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Afficher l'erreur
+        }
+        return false; // Retourne false si l'insertion échoue
     }
 
 

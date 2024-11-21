@@ -13,24 +13,27 @@ public class BookingPOJO implements Serializable {
 	private int id;
     private Date dateReservation;
     private int nombreParticipants;
+    private String NomBooking;
     private SkierPOJO skier;  // Référence à SkierPOJO
     private InstructorPOJO instructor; // Référence à InstructorPOJO
     private LessonPOJO lesson; // Référence à LessonPOJO
     private PeriodPOJO period;  // Référence à PeriodPOJO
     
-	public BookingPOJO(int id, Date dateReservation, int nombreParticipants) {
+	public BookingPOJO(int id, Date dateReservation, int nombreParticipants,String NomBooking) {
 		super();
 		this.id = id;
 		this.dateReservation = dateReservation;
 		this.nombreParticipants = nombreParticipants;
+		this.NomBooking = NomBooking;
 	}
-	public BookingPOJO(SkierPOJO skier, InstructorPOJO instructor, LessonPOJO lesson, PeriodPOJO period) {
+	public BookingPOJO(SkierPOJO skier, InstructorPOJO instructor, LessonPOJO lesson, PeriodPOJO period,String nomBooking) {
         this.skier = skier;
         this.instructor = instructor;
         this.lesson = lesson;
         this.period = period;
         this.dateReservation = new Date();  // La date actuelle de la réservation
         this.nombreParticipants = 1;  // Par défaut, une réservation pour 1 participant
+        this.NomBooking = nomBooking;
     }
 
 	// Getters et Setters
@@ -89,6 +92,10 @@ public class BookingPOJO implements Serializable {
     public void setPeriod(PeriodPOJO period) {
         this.period = period;
     }
+    public String getNomBooking()
+    {
+    	return NomBooking;
+    }
 
 	@Override
 	public String toString() {
@@ -124,6 +131,11 @@ public class BookingPOJO implements Serializable {
 		System.out.println("555555555555555");
         BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
         bookingDAO.createBooking(this);
+    }
+	public static boolean AddBookingWithId(int idSkier,int idLesson,int idInstructeur,int idPeriod) {
+		System.out.println("555555555555555");
+        BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
+        return bookingDAO.AddBookingWithId(idSkier,idLesson,idInstructeur,idPeriod);
     }
     
 }

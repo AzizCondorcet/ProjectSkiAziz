@@ -53,9 +53,57 @@ public class SkierDAO extends DAO_Generique<SkierPOJO> {
         }
         return skier;
     }
-    public List<SkierPOJO> getAllSkiers() {
+    public boolean NewSkier(String Nom, String Prenom, java.util.Date date, String Niveau, boolean Assurance) {
+        boolean success = false; // Initialiser le succès à faux
+        try {
+            // Vérifier si le skieur existe déjà dans la base de données
+            String checkQuery = "SELECT COUNT(*) FROM Skier WHERE nom = ? AND prenom = ?";
+            PreparedStatement checkStmt = this.connect.prepareStatement(checkQuery);
+            checkStmt.setString(1, Nom);  // Utilisation des paramètres passés à la méthode
+            checkStmt.setString(2, Prenom);
+
+            ResultSet resultSet = checkStmt.executeQuery();
+            if (resultSet.next()) {
+                int count = resultSet.getInt(1);
+                if (count > 0) {
+                    // Si le skieur existe déjà, renvoyer false
+                    System.out.println("Ce skieur existe déjà dans la base de données.");
+                    return false;
+                }
+            }
+
+            // Requête d'insertion
+            String insertQuery = "INSERT INTO Skier (nom, prenom, dateNaissance, niveau, assurance) " +
+                                 "VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement insertStmt = this.connect.prepareStatement(insertQuery);
+            insertStmt.setString(1, Nom);  // Utilisation des paramètres passés à la méthode
+            insertStmt.setString(2, Prenom);
+            insertStmt.setDate(3, new java.sql.Date(date.getTime()));  // Convertir la Date Java en SQL Date
+            insertStmt.setString(4, Niveau);  // Le niveau du skieur
+            insertStmt.setBoolean(5, Assurance);  // Assurance en tant que booléen (true/false)
+
+            // Exécution de la requête d'insertion et vérification des lignes affectées
+            int affectedRows = insertStmt.executeUpdate();
+            if (affectedRows > 0) {
+                success = true; // Si au moins une ligne est affectée, succès
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Affiche l'erreur dans la console
+        }
+        return success; // Retourner le succès ou l'échec
+    }
+    
+    public List<SkierPOJO> getAllSkiersNotInBooking() {
         List<SkierPOJO> skiers = new ArrayList<>();
-        String query = "SELECT id, nom, prenom, dateNaissance, niveau, assurance FROM Skier";
+        String query = """
+                SELECT id, nom, prenom, dateNaissance, niveau, assurance 
+                FROM Skier s
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM Booking b
+                    WHERE b.skier_id = s.id
+                )
+            """;
 
         try (PreparedStatement statement = connect.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {

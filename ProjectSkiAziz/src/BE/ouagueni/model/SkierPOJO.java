@@ -63,9 +63,18 @@ public class SkierPOJO extends PersonnePOJO {
         SkierDAO skierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
         return skierDAO.findByNameAndSurname(name, surname) != null;
     }
-    public static List<SkierPOJO> getAllSkier() {
+    public static List<SkierPOJO> getAllSkierNotInBooking() {
         SkierDAO SkierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
-        return SkierDAO.getAllSkiers();
+        return SkierDAO.getAllSkiersNotInBooking();
     }
+    public static boolean NewSkier(String Nom,String Prenom, Date Date,String Niveau,boolean assurance) {
+        SkierDAO skierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
+        return skierDAO.NewSkier(Nom,Prenom,Date,Niveau,assurance); 
+    }
+    public static SkierPOJO findByNameAndSurname(String Nom,String Prenom) {
+        SkierDAO skierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
+        return skierDAO.findByNameAndSurname(Nom,Prenom); 
+    }
+
 
 }
