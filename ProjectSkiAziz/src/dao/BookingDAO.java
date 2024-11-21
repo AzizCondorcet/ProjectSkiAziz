@@ -96,34 +96,55 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
             throw new SQLException("Invalid value for " + fieldName + ": " + value, e);
         }
     }
-    public boolean AddBookingWithId(int idSkier, int idLesson, int idInstructeur, int idPeriod) {
+    public boolean AddBookingWithId(int idSkier, int idLesson, int idInstructeur, int idPeriod, String NomBooking) {
         // Récupérer la connexion
         Connection connection = EcoleConnection.getInstance().getConnect();
         System.out.println("AddBookingWithId");
-        
-        // Définir la requête d'insertion dans la table Booking
-        String query = "INSERT INTO Booking (dateReservation, nombreParticipants, lesson_id, instructor_id, skier_id, period_id) " +
-                       "VALUES (SYSDATE, 1, ?, ?, ?, ?)"; // SYSDATE pour la date actuelle, nombreParticipants à 1 par défaut
-        
+
+        String query = "INSERT INTO Booking (dateReservation, nombreParticipants, nomBooking, lesson_id, instructor_id, skier_id, period_id) " +
+                       "VALUES (SYSDATE, 1, ?, ?, ?, ?, ?)";
+
+        System.out.println("Executing query: " + query);
+
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            // Ajouter les paramètres à la requête
-            stmt.setInt(1, idLesson);      // lesson_id
-            stmt.setInt(2, idInstructeur); // instructor_id
-            stmt.setInt(3, idSkier);       // skier_id
-            stmt.setInt(4, idPeriod);      // period_id
-            
+            // Ajouter les paramètres
+            stmt.setString(1, NomBooking);  // nomBooking
+            stmt.setInt(2, idLesson);       // lesson_id
+            stmt.setInt(3, idInstructeur);  // instructor_id
+            stmt.setInt(4, idSkier);        // skier_id
+            stmt.setInt(5, idPeriod);       // period_id
+
+            // Logs avant exécution
+            System.out.println("Prepared Statement: " + stmt.toString());
+
             // Exécuter la requête
             int affectedRows = stmt.executeUpdate();
-            
-            // Vérifier si l'insertion a été effectuée avec succès
+            System.out.println("Affected rows: " + affectedRows);
+
             if (affectedRows > 0) {
-                return true; // Si au moins une ligne est affectée, l'insertion est réussie
+                // Commit explicite pour Oracle
+                connection.commit();
+                System.out.println("Transaction committed.");
+                return true;
+            } else {
+                System.err.println("No rows affected. Please check data integrity.");
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Afficher l'erreur
+            System.err.println("SQL Exception occurred:");
+            e.printStackTrace();
+
+            try {
+                connection.rollback(); // Annuler en cas d'erreur
+                System.err.println("Transaction rolled back.");
+            } catch (SQLException rollbackEx) {
+                System.err.println("Rollback failed:");
+                rollbackEx.printStackTrace();
+            }
         }
-        return false; // Retourne false si l'insertion échoue
+
+        return false; // Échec si aucune ligne n'est insérée
     }
+
 
 
 	@Override

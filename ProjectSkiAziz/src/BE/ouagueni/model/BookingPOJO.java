@@ -132,10 +132,11 @@ public class BookingPOJO implements Serializable {
         BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
         bookingDAO.createBooking(this);
     }
-	public static boolean AddBookingWithId(int idSkier,int idLesson,int idInstructeur,int idPeriod) {
+	public static boolean AddBookingWithId(int idSkier,int idLesson,int idInstructeur,int idPeriod,String NomBooking) 
+	{
 		System.out.println("555555555555555");
         BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
-        return bookingDAO.AddBookingWithId(idSkier,idLesson,idInstructeur,idPeriod);
+        return bookingDAO.AddBookingWithId(idSkier,idLesson,idInstructeur,idPeriod,NomBooking);
     }
     
 }

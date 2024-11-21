@@ -160,6 +160,7 @@ public class PartieGraphique extends JFrame {
                             LessonPOJO selectedLesson = lessons.get(selectedLessonIndex);
                             InstructorPOJO selectedInstructor = instructors.get(selectedInstructorIndex);
                             PeriodPOJO selectedPeriod = periods.get(selectedPeriodIndex);
+                            String NomBooking = JOptionPane.showInputDialog("Nom du booking : ");
                             System.out.println("-----------------------------------");
                             System.out.println(selectedLesson.getid());
                             System.out.println("-----------------------------------");
@@ -169,8 +170,10 @@ public class PartieGraphique extends JFrame {
                             System.out.println("-----------------------------------");
                             System.out.println(skier.getId());
                             System.out.println("-----------------------------------");
-                            
-                            boolean bookingSuccess = BookingPOJO.AddBookingWithId(skier.getId(), selectedLesson.getid(), selectedInstructor.getId(), selectedPeriod.getid());
+                            System.out.println(NomBooking);
+                            System.out.println("-----------------------------------");
+                           
+                            boolean bookingSuccess = BookingPOJO.AddBookingWithId(skier.getId(), selectedLesson.getid(), selectedInstructor.getId(), selectedPeriod.getid(),NomBooking);
                             System.out.println(bookingSuccess);
                             if (bookingSuccess) {
                                 JOptionPane.showMessageDialog(null, "Réservation réussie !");
@@ -246,7 +249,7 @@ public class PartieGraphique extends JFrame {
                         selectedLessonPOJO != null && selectedPeriodPOJO != null) {
 
                     	System.out.println("999999999999999999");
-                        // Créer l'objet Booking et le sauvegarder via POJO
+                        // Créer l'objet Booking et le sauvegarder via POJ
                         BookingPOJO booking = new BookingPOJO(selectedSkierPOJO, selectedInstructorPOJO, selectedLessonPOJO, selectedPeriodPOJO,nomBooking);
                         booking.createBooking(); // Appel de la méthode POJO qui va interagir avec le DAO pour créer le booking
 
