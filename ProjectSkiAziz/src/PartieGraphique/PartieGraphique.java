@@ -72,7 +72,7 @@ public class PartieGraphique extends JFrame {
         contentPane.add(btnNewSkierChooseBooking);
         
         // bouton "SkierChooseBooking"
-        JButton btnSkierChooseBooking = createButton("Skier wante to choose a booking", 150, 460);
+        JButton btnSkierChooseBooking = createButton("Skier wante to choose a booking", 500, 100);
         contentPane.add(btnSkierChooseBooking);
         
         // Action des boutons
