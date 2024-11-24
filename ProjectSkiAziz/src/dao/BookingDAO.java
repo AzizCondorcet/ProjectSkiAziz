@@ -13,9 +13,9 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
     private Connection connection;
 
     public BookingDAO(Connection conn) {
-        super(conn);
+        super(conn); // Probablement inutile si vous n'en avez pas besoin ici
+        this.connection = conn; // Assurez-vous d'initialiser ce champ
     }
-    
 
     // Méthode pour récupérer toutes les réservations
     public List<BookingPOJO> getAllBookings() {
@@ -38,7 +38,7 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
         }
 
         return bookings;
-    }
+    }	
     public void createBooking(BookingPOJO booking) {
         java.util.logging.Logger.getLogger("oracle.jdbc").setLevel(java.util.logging.Level.FINEST);
         System.setProperty("java.util.logging.ConsoleHandler.level", "FINEST");
@@ -96,57 +96,58 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
             throw new SQLException("Invalid value for " + fieldName + ": " + value, e);
         }
     }
-    public boolean AddBookingWithId(int idSkier, int idLesson, int idInstructeur, int idPeriod, String NomBooking) {
-        // Récupérer la connexion
-        Connection connection = EcoleConnection.getInstance().getConnect();
-        System.out.println("AddBookingWithId");
+    public boolean AddBookingWithId(int idSkier, int idLesson, int idInstructeur, int idPeriod, String NomBooking) throws SQLException {
+        if (connection == null) {
+            throw new SQLException("La connexion à la base de données n'est pas initialisée.");
+        }
+        
+        // Désactiver l'auto-commit pour gérer manuellement les transactions
+        connection.setAutoCommit(false);
 
         String query = "INSERT INTO Booking (dateReservation, nombreParticipants, nomBooking, lesson_id, instructor_id, skier_id, period_id) " +
                        "VALUES (SYSDATE, 1, ?, ?, ?, ?, ?)";
 
-        System.out.println("Executing query: " + query);
+        System.out.println("Query : " + query);
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            // Ajouter les paramètres
-            stmt.setString(1, NomBooking);  // nomBooking
-            stmt.setInt(2, idLesson);       // lesson_id
-            stmt.setInt(3, idInstructeur);  // instructor_id
-            stmt.setInt(4, idSkier);        // skier_id
-            stmt.setInt(5, idPeriod);       // period_id
+            // Paramètres
+            stmt.setString(1, NomBooking);
+            stmt.setInt(2, idLesson);
+            stmt.setInt(3, idInstructeur);
+            stmt.setInt(4, idSkier);
+            stmt.setInt(5, idPeriod);
 
-            // Logs avant exécution
-            System.out.println("Prepared Statement: " + stmt.toString());
+            System.out.println("Statement avant exécution : " + stmt);
 
             // Exécuter la requête
             int affectedRows = stmt.executeUpdate();
-            System.out.println("Affected rows: " + affectedRows);
+            System.out.println("Rows affected : " + affectedRows);
 
             if (affectedRows > 0) {
-                // Commit explicite pour Oracle
                 connection.commit();
-                System.out.println("Transaction committed.");
                 return true;
             } else {
-                System.err.println("No rows affected. Please check data integrity.");
+                System.err.println("Aucune ligne affectée. Vérifiez l'intégrité des données.");
             }
         } catch (SQLException e) {
-            System.err.println("SQL Exception occurred:");
-            e.printStackTrace();
-
-            try {
-                connection.rollback(); // Annuler en cas d'erreur
-                System.err.println("Transaction rolled back.");
-            } catch (SQLException rollbackEx) {
-                System.err.println("Rollback failed:");
-                rollbackEx.printStackTrace();
+            System.err.println("Erreur SQL : " + e.getMessage());
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                    System.err.println("Transaction annulée.");
+                } catch (SQLException rollbackEx) {
+                    System.err.println("Erreur lors du rollback : " + rollbackEx.getMessage());
+                }
+            }
+            throw e;
+        } finally {
+            // Réactiver l'auto-commit
+            if (connection != null) {
+                connection.setAutoCommit(true);
             }
         }
-
-        return false; // Échec si aucune ligne n'est insérée
+        return false;
     }
-
-
-
 	@Override
 	public boolean create(SkierPOJO obj) {
 		// TODO Auto-generated method stub

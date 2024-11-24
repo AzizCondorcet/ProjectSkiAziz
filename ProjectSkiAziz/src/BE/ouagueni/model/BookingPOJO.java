@@ -1,6 +1,7 @@
 package BE.ouagueni.model;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -132,10 +133,10 @@ public class BookingPOJO implements Serializable {
         BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
         bookingDAO.createBooking(this);
     }
-	public static boolean AddBookingWithId(int idSkier,int idLesson,int idInstructeur,int idPeriod,String NomBooking) 
+	public static boolean AddBookingWithId(int idSkier,int idLesson,int idInstructeur,int idPeriod,String NomBooking) throws SQLException 
 	{
 		System.out.println("555555555555555");
-        BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
+		BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
         return bookingDAO.AddBookingWithId(idSkier,idLesson,idInstructeur,idPeriod,NomBooking);
     }
     

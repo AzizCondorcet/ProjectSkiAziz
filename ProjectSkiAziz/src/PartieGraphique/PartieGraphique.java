@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -66,14 +67,98 @@ public class PartieGraphique extends JFrame {
         JButton btnCreateBooking = createButton("Create Booking", 150, 340);
         contentPane.add(btnCreateBooking);
         
+        // bouton "NewSkierChooseBooking"
+        JButton btnNewSkierChooseBooking = createButton("New skier wante to choose a booking", 150, 400);
+        contentPane.add(btnNewSkierChooseBooking);
+        
         // bouton "SkierChooseBooking"
-        JButton btnSkierChooseBooking = createButton("skier wante to choose a booking", 150, 400);
+        JButton btnSkierChooseBooking = createButton("Skier wante to choose a booking", 150, 460);
         contentPane.add(btnSkierChooseBooking);
         
         // Action des boutons
+        btnSkierChooseBooking.addActionListener(new ActionListener() {
+        	@Override
+        	 public void actionPerformed(ActionEvent e) {
+        	        // Récupérer la liste des skieurs existants
+        	        List<SkierPOJO> skiers = SkierPOJO.getAllSkiers();
+        	        if (skiers.isEmpty()) {
+        	            JOptionPane.showMessageDialog(null, "Aucun skieur disponible. Veuillez d'abord en créer un.");
+        	            return; // Arrêter si aucun skieur n'est disponible
+        	        }
+        	        // Afficher la liste des skieurs pour la sélection
+        	        StringBuilder skierList = new StringBuilder("Sélectionnez un skieur existant :\n");
+        	        for (int i = 0; i < skiers.size(); i++) {
+        	            skierList.append(i + 1).append(". ").append(skiers.get(i).getNom())
+        	                     .append(" ").append(skiers.get(i).getPrenom()).append("\n");
+        	        }
+        	        String selectedSkierIndexStr = JOptionPane.showInputDialog(null, skierList.toString() + "Entrez le numéro du skieur :");
+        	        int selectedSkierIndex;
+        	        try {
+        	            selectedSkierIndex = Integer.parseInt(selectedSkierIndexStr) - 1;
+        	            if (selectedSkierIndex < 0 || selectedSkierIndex >= skiers.size()) {
+        	                JOptionPane.showMessageDialog(null, "Numéro invalide. Veuillez réessayer.");
+        	                return;
+        	            }
+        	        } catch (NumberFormatException ex) {
+        	            JOptionPane.showMessageDialog(null, "Entrée invalide. Veuillez entrer un numéro.");
+        	            return;
+        	        }
+        	        
+        	     // Récupérer la liste des leçons disponibles
+        	        List<LessonPOJO> lessons = LessonPOJO.getAllLessons();
+        	        StringBuilder lessonsList = new StringBuilder("Leçons disponibles :\n");
+        	        for (int i = 0; i < lessons.size(); i++) {
+        	            lessonsList.append(i + 1).append(". ").append(lessons.get(i).getid()).append("\n");
+        	        }
+        	        String selectedLessonIndexStr = JOptionPane.showInputDialog(null, lessonsList.toString() + "Sélectionnez une leçon (numéro) :");
+        	        int selectedLessonIndex = Integer.parseInt(selectedLessonIndexStr) - 1;
+        	        
+        	     // Récupérer la liste des instructeurs disponibles
+        	        List<InstructorPOJO> instructors = InstructorPOJO.getAllInstructor();
+        	        StringBuilder instructorsList = new StringBuilder("Instructeurs disponibles :\n");
+        	        for (int i = 0; i < instructors.size(); i++) {
+        	            instructorsList.append(i + 1).append(". ").append(instructors.get(i).getNom()).append("\n");
+        	        }
+        	        String selectedInstructorIndexStr = JOptionPane.showInputDialog(null, instructorsList.toString() + "Sélectionnez un instructeur (numéro) :");
+        	        int selectedInstructorIndex = Integer.parseInt(selectedInstructorIndexStr) - 1;
+        	        
+        	     // Récupérer la liste des périodes disponibles
+        	        List<PeriodPOJO> periods = PeriodPOJO.getAllPeriod();
+        	        StringBuilder periodsList = new StringBuilder("Périodes disponibles :\n");
+        	        for (int i = 0; i < periods.size(); i++) {
+        	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        	            periodsList.append(i + 1).append(". ")
+        	                       .append(sdf.format(periods.get(i).getStartDate())).append(" à ")
+        	                       .append(sdf.format(periods.get(i).getEndDate())).append("\n");
+        	        }
+        	        String selectedPeriodIndexStr = JOptionPane.showInputDialog(null, periodsList.toString() + "Sélectionnez une période (numéro) :");
+        	        int selectedPeriodIndex = Integer.parseInt(selectedPeriodIndexStr) - 1;
+        	        
+        	     // Récupérer les choix sélectionnés
+        	        LessonPOJO selectedLesson = lessons.get(selectedLessonIndex);
+        	        InstructorPOJO selectedInstructor = instructors.get(selectedInstructorIndex);
+        	        PeriodPOJO selectedPeriod = periods.get(selectedPeriodIndex);
+        	        String NomBooking = JOptionPane.showInputDialog("Nom du booking : ");
+        	        boolean bookingSuccess;
+        	        
+					try {
+						bookingSuccess = BookingPOJO.AddBookingWithId(selectedSkierIndex, selectedLesson.getid(), selectedInstructor.getId(), selectedPeriod.getid(),NomBooking);
+                        System.out.println(bookingSuccess);
+                        if (bookingSuccess) {
+                            JOptionPane.showMessageDialog(null, "Réservation réussie !");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Erreur lors de la réservation.");
+                        }
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+    }
+});
+   
         
         // Creation du bouton pour SkierChooseBooking
-        btnSkierChooseBooking.addActionListener(new ActionListener() {
+        btnNewSkierChooseBooking.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Ouvrir une boîte de dialogue ou une fenêtre pour saisir les informations du skieur
@@ -173,13 +258,19 @@ public class PartieGraphique extends JFrame {
                             System.out.println(NomBooking);
                             System.out.println("-----------------------------------");
                            
-                            boolean bookingSuccess = BookingPOJO.AddBookingWithId(skier.getId(), selectedLesson.getid(), selectedInstructor.getId(), selectedPeriod.getid(),NomBooking);
-                            System.out.println(bookingSuccess);
-                            if (bookingSuccess) {
-                                JOptionPane.showMessageDialog(null, "Réservation réussie !");
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Erreur lors de la réservation.");
-                            }
+                            boolean bookingSuccess;
+							try {
+								bookingSuccess = BookingPOJO.AddBookingWithId(skier.getId(), selectedLesson.getid(), selectedInstructor.getId(), selectedPeriod.getid(),NomBooking);
+	                            System.out.println(bookingSuccess);
+	                            if (bookingSuccess) {
+	                                JOptionPane.showMessageDialog(null, "Réservation réussie !");
+	                            } else {
+	                                JOptionPane.showMessageDialog(null, "Erreur lors de la réservation.");
+	                            }
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
                         } else {
                             JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de l'ajout du skieur.");
                         }

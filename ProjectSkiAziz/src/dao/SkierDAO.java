@@ -126,6 +126,34 @@ public class SkierDAO extends DAO_Generique<SkierPOJO> {
         }
         return skiers;
     }
+    public List<SkierPOJO> getAllSkiers() {
+        List<SkierPOJO> skiers = new ArrayList<>();
+        String query = """
+        	    SELECT id, nom, prenom, dateNaissance, niveau, assurance
+        	    FROM Skier s
+        	""";
+
+        try (PreparedStatement statement = connect.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                // Récupérer les données de chaque skieur depuis le ResultSet
+                int id = resultSet.getInt("id");
+                String nom = resultSet.getString("nom");
+                String prenom = resultSet.getString("prenom");
+                Date dateNaissance = resultSet.getDate("dateNaissance");
+                String niveau = resultSet.getString("niveau");
+                boolean assurance = resultSet.getBoolean("assurance");
+
+                // Créer un objet SkierPOJO et l'ajouter à la liste
+                SkierPOJO skier = new SkierPOJO(id, nom, prenom, dateNaissance, niveau, assurance);
+                skiers.add(skier);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return skiers;
+    }
 
 	@Override
 	public SkierPOJO find(int id) {
