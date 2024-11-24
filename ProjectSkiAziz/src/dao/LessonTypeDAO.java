@@ -1,5 +1,6 @@
 package dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -55,7 +56,8 @@ public class LessonTypeDAO extends DAO_Generique<InstructorPOJO> {
 	                String level = resultSet.getString("lesson_level");
 	                double price = resultSet.getDouble("price");
 
-	                LessonTypePOJO lessonType = new LessonTypePOJO(level, price);
+	                BigDecimal priceBigDecimal = BigDecimal.valueOf(price);  // Conversion du double en BigDecimal
+	                LessonTypePOJO lessonType = new LessonTypePOJO(level, priceBigDecimal);
 	                lessonType.setId(id); // Assurez-vous d'avoir un champ `id` dans LessonTypePOJO.
 	                lessonTypes.add(lessonType);
 	            }

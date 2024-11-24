@@ -1,6 +1,7 @@
 package BE.ouagueni.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -8,13 +9,16 @@ import dao.LessonTypeDAO;
 
 public class LessonTypePOJO implements Serializable {
     private String level;
-    private double price;
+    private BigDecimal price;
     private int id;
     
-	public LessonTypePOJO(String level, double price) {
+	public LessonTypePOJO(String level, BigDecimal price) {
 		super();
 		this.level = level;
 		this.price = price;
+	}
+	public LessonTypePOJO() {
+		super();
 	}
 
 	public int getId() {
@@ -32,12 +36,12 @@ public class LessonTypePOJO implements Serializable {
 		this.level = level;
 	}
 
-	public double getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(double price) {
-		this.price = price;
+	public void setPrice(BigDecimal bigDecimal) {
+		this.price = bigDecimal;
 	}
 
 	@Override
@@ -50,7 +54,7 @@ public class LessonTypePOJO implements Serializable {
 		return Objects.hash(level, price);
 	}
 
-	@Override
+	/*@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -61,7 +65,7 @@ public class LessonTypePOJO implements Serializable {
 		LessonTypePOJO other = (LessonTypePOJO) obj;
 		return Objects.equals(level, other.level)
 				&& Double.doubleToLongBits(price) == Double.doubleToLongBits(other.price);
-	}
+	}*/
 	public static List<LessonTypePOJO> getAllLessonTypes() {
         LessonTypeDAO lessonTypeDAO = new LessonTypeDAO();
         return lessonTypeDAO.getAllLessonTypes(); 

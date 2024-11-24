@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import dao.InstructorDAO;
 import dao.LessonDAO;
 import dao.SkierDAO;
 import singleton.EcoleConnection;
@@ -80,5 +81,8 @@ public class SkierPOJO extends PersonnePOJO {
         return skierDAO.findByNameAndSurname(Nom,Prenom); 
     }
 
-
+    public static SkierPOJO getSkierById(int idSkier) {
+    	SkierDAO skierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
+        return skierDAO.getSkierById(idSkier); 
+    }
 }

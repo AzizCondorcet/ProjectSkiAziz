@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import dao.BookingDAO;
+import dao.InstructorDAO;
 import singleton.EcoleConnection;
 
 public class BookingPOJO implements Serializable {
@@ -19,6 +20,7 @@ public class BookingPOJO implements Serializable {
     private InstructorPOJO instructor; // Référence à InstructorPOJO
     private LessonPOJO lesson; // Référence à LessonPOJO
     private PeriodPOJO period;  // Référence à PeriodPOJO
+    
     
 	public BookingPOJO(int id, Date dateReservation, int nombreParticipants,String NomBooking) {
 		super();
@@ -37,6 +39,9 @@ public class BookingPOJO implements Serializable {
         this.NomBooking = nomBooking;
     }
 
+	public void setNomBooking(String nomBooking) {
+		NomBooking = nomBooking;
+	}
 	// Getters et Setters
     public int getId() {
         return id;
@@ -139,6 +144,11 @@ public class BookingPOJO implements Serializable {
 		BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
         return bookingDAO.AddBookingWithId(idSkier,idLesson,idInstructeur,idPeriod,NomBooking);
     }
+    public static List<BookingPOJO> getBookingsByInstructorId(int instructorId) {
+    	BookingDAO BookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
+    	return BookingDAO.getBookingsByInstructorId(instructorId);
+    }
+   
     
 }
 

@@ -90,6 +90,9 @@ public class InstructorPOJO extends PersonnePOJO {
     	InstructorDAO instructorDAO = new InstructorDAO(EcoleConnection.getInstance().getConnect());
         return instructorDAO.getAllInstructor();
     }
-    
+    public static InstructorPOJO getInstructorById(int idInstru) {
+    	InstructorDAO instructorDAO = new InstructorDAO(EcoleConnection.getInstance().getConnect());
+        return instructorDAO.getInstructorById(idInstru); 
+    }
 }
 

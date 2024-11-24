@@ -75,7 +75,67 @@ public class PartieGraphique extends JFrame {
         JButton btnSkierChooseBooking = createButton("Skier wante to choose a booking", 500, 100);
         contentPane.add(btnSkierChooseBooking);
         
+        // bouton "InstructorSeeHisBooking"
+        JButton InstructorSeeHisBooking = createButton("Instructor See His Booking", 500, 160);
+        contentPane.add(InstructorSeeHisBooking);
+        
         // Action des boutons
+        InstructorSeeHisBooking.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                List<BookingPOJO> ListBooking;
+                // Afficher la liste des instructeurs
+                List<InstructorPOJO> instructors = InstructorPOJO.getAllInstructor(); // Vous devrez créer cette méthode pour récupérer tous les instructeurs
+
+                StringBuilder instructorList = new StringBuilder("Liste des Instructeurs :\n");
+                for (int i = 0; i < instructors.size(); i++) {
+                    InstructorPOJO instructor = instructors.get(i);
+                    instructorList.append(i + 1).append(". ").append(instructor.getNom()).append(" ").append(instructor.getPrenom()).append("\n");
+                }
+                String selectedInstructorIndexStr = JOptionPane.showInputDialog(instructorList.toString() + "Sélectionnez un instructeur (numéro) :");
+                int selectedInstructorIndex = Integer.parseInt(selectedInstructorIndexStr) - 1;
+
+                // Récupérer les réservations de l'instructeur sélectionné
+                ListBooking = BookingPOJO.getBookingsByInstructorId(instructors.get(selectedInstructorIndex).getId());
+
+                // Afficher les bookings
+                StringBuilder bookingList = new StringBuilder("Réservations de " + instructors.get(selectedInstructorIndex).getNom() + " :\n");
+                
+                for (BookingPOJO booking : ListBooking) {
+                	System.out.println("Booking ID: " + booking.getId());
+                	System.out.println("Lesson ID: " + booking.getLesson().getId());
+                	System.out.println("Lesson Name: " + booking.getLesson().getName());
+
+                    // Récupérer les informations de réservation avec une mise en forme claire
+                    String bookingDetails = "Booking ID: " + booking.getId() + "\n";
+                    bookingDetails += "Date de réservation: " + booking.getDateReservation() + "\n";
+                    bookingDetails += "Nombre de participants: " + booking.getNombreParticipants() + "\n";
+                    
+                    // Afficher les détails de la leçon avec vérification pour null
+                    bookingDetails += "Leçon: " + (booking.getLesson() != null ? booking.getLesson().getName() : "Non spécifié") + "\n";
+
+                    
+                    // Afficher les détails du skieur
+                    bookingDetails += "Skieur: " + (booking.getSkier() != null ? booking.getSkier().getNom() : "Non spécifié") + "\n";
+                    
+                    // Afficher les détails de l'instructeur
+                    bookingDetails += "Instructeur: " + (booking.getInstructor() != null ? booking.getInstructor().getNom() : "Non spécifié") + "\n";
+                    
+                    // Afficher les dates de la période
+                    bookingDetails += "Période - Date début: " + (booking.getPeriod() != null ? booking.getPeriod().getStartDate() : "Non spécifié") + "\n";
+                    bookingDetails += "Période - Date fin: " + (booking.getPeriod() != null ? booking.getPeriod().getEndDate() : "Non spécifié") + "\n";
+                    
+                    // Afficher le nom de la réservation
+                    bookingDetails += "Nom de la réservation: " + booking.getNomBooking() + "\n";
+
+                    // Ajouter les détails du booking à la liste
+                    bookingList.append(bookingDetails).append("\n");
+                }
+
+                // Afficher les informations dans une boîte de dialogue
+                JOptionPane.showMessageDialog(null, bookingList.toString());
+            }
+        });
+        
         btnSkierChooseBooking.addActionListener(new ActionListener() {
         	@Override
         	 public void actionPerformed(ActionEvent e) {

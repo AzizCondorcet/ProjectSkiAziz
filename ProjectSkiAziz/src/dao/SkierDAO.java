@@ -34,11 +34,14 @@ public class SkierDAO extends DAO_Generique<SkierPOJO> {
     }
     public SkierPOJO findByNameAndSurname(String name, String surname) {
         SkierPOJO skier = null;
-        try {
-            Statement stmt = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            String query = "SELECT * FROM Skier WHERE nom = '" + name + "' AND prenom = '" + surname + "'";
-            ResultSet result = stmt.executeQuery(query);
-
+        String query = "SELECT * FROM Skier WHERE nom = ? AND prenom = ?";
+        
+        try (PreparedStatement stmt = this.connect.prepareStatement(query)) {
+            stmt.setString(1, name);   // Remplace le premier '?' par 'name'
+            stmt.setString(2, surname); // Remplace le second '?' par 'surname'
+            
+            ResultSet result = stmt.executeQuery();
+            
             if (result.next()) {
                 skier = new SkierPOJO();
                 skier.setId(result.getInt("id"));
@@ -51,6 +54,31 @@ public class SkierDAO extends DAO_Generique<SkierPOJO> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
+        return skier;
+    }
+    public SkierPOJO getSkierById(int idSkier) {
+        SkierPOJO skier = null;
+        String query = "SELECT * FROM Skier WHERE id = ?";
+        
+        try (PreparedStatement stmt = this.connect.prepareStatement(query)) {
+            stmt.setInt(1, idSkier);   // Remplace le premier '?' par 'idSkier'
+            
+            ResultSet result = stmt.executeQuery();
+            
+            if (result.next()) {
+                skier = new SkierPOJO();
+                skier.setId(result.getInt("id"));
+                skier.setNom(result.getString("nom"));
+                skier.setPrenom(result.getString("prenom"));
+                skier.setDateNaissance(result.getDate("dateNaissance"));
+                skier.setNiveau(result.getString("niveau"));
+                skier.setAssurance(result.getBoolean("assurance"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
         return skier;
     }
     public boolean NewSkier(String Nom, String Prenom, java.util.Date date, String Niveau, boolean Assurance) {

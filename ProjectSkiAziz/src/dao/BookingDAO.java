@@ -1,6 +1,9 @@
 package dao;
 
 import BE.ouagueni.model.BookingPOJO;
+import BE.ouagueni.model.InstructorPOJO;
+import BE.ouagueni.model.LessonPOJO;
+import BE.ouagueni.model.PeriodPOJO;
 import BE.ouagueni.model.SkierPOJO;
 import singleton.EcoleConnection;
 
@@ -148,6 +151,60 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
         }
         return false;
     }
+    // Méthode pour récupérer les bookings d'un instructeur donné par son ID
+    public List<BookingPOJO> getBookingsByInstructorId(int instructorId) {
+        List<BookingPOJO> bookings = new ArrayList<>();
+        String query = """
+            SELECT b.id, b.dateReservation, b.nombreParticipants, b.lesson_id, b.skier_id, b.period_id, b.nomBooking
+            FROM Booking b
+            WHERE b.instructor_id = ?
+        """;
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            // Paramétrer l'ID de l'instructeur
+            statement.setInt(1, instructorId);
+
+            // Exécuter la requête
+            ResultSet resultSet = statement.executeQuery();
+
+            // Parcourir les résultats et ajouter les bookings à la liste
+            while (resultSet.next()) {
+                int bookingId = resultSet.getInt("id");
+                Date dateReservation = resultSet.getDate("dateReservation");
+                int nombreParticipants = resultSet.getInt("nombreParticipants");
+                int lessonId = resultSet.getInt("lesson_id");
+                int skierId = resultSet.getInt("skier_id");
+                int periodId = resultSet.getInt("period_id");
+                String nomBooking = resultSet.getString("nomBooking");
+                
+                // Récupérer les objets associés (Skier, Instructor, Lesson, Period)
+                SkierPOJO skier = SkierPOJO.getSkierById(skierId); // Vous devez créer cette méthode dans SkierPOJO
+                InstructorPOJO instructor = InstructorPOJO.getInstructorById(instructorId); // Même chose pour Instructor
+                LessonPOJO lesson = null;
+                if (lessonId > 0) {  // Vérifier si l'ID de la leçon est valide
+                    lesson = LessonPOJO.getLessonById(lessonId); // Idem pour Lesson
+                }
+                PeriodPOJO period = PeriodPOJO.getPeriodById(periodId); // Idem pour Period
+
+                // Si la leçon est trouvée, l'afficher dans les logs pour vérifier
+                if (lesson != null) {
+                    System.out.println("Leçon : " + lesson.toString());
+                } else {
+                    System.out.println("Leçon non trouvée pour Booking ID: " + bookingId);
+                }
+
+                BookingPOJO booking = new BookingPOJO(skier, instructor, lesson, period, nomBooking);
+                booking.setId(bookingId);
+                bookings.add(booking);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return bookings;
+    }
+    
 	@Override
 	public boolean create(SkierPOJO obj) {
 		// TODO Auto-generated method stub

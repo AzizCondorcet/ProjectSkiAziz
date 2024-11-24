@@ -22,7 +22,16 @@ public class PeriodPOJO implements Serializable {
 		this.endDate = endDate;
 		this.isVacation = isVacation;
 	}
+	public PeriodPOJO() {
+		super();
+	}
 
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public int getid()
 	{
 		return id;
@@ -81,6 +90,10 @@ public class PeriodPOJO implements Serializable {
     public static List<PeriodPOJO> getAllPeriod() {
         PeriodDAO PeriodDAO = new PeriodDAO(EcoleConnection.getInstance().getConnect());
         return PeriodDAO.getAllPeriod(); 
+    }
+    public static PeriodPOJO getPeriodById(int idPeriod) {
+    	PeriodDAO PeriodDAO = new PeriodDAO(EcoleConnection.getInstance().getConnect());
+        return PeriodDAO.getPeriodById(idPeriod); 
     }
     
 }

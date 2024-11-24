@@ -71,6 +71,31 @@ public class PeriodDAO extends DAO_Generique<SkierPOJO> {
 
         return periods; // Retourner la liste des périodes
     }
+    
+    public PeriodPOJO getPeriodById(int idPeriod) {
+        PeriodPOJO period = null;
+        String query = "SELECT * FROM Period WHERE id = ?";
+        
+        try (PreparedStatement stmt = this.connect.prepareStatement(query)) {
+            stmt.setInt(1, idPeriod);  // Remplacer '?' par 'idPeriod'
+            
+            try (ResultSet result = stmt.executeQuery()) {
+                if (result.next()) {
+                    period = new PeriodPOJO();
+                    period.setId(result.getInt("id"));
+                    period.setStartDate(result.getDate("startDate"));
+                    period.setEndDate(result.getDate("endDate"));
+                    period.setVacation(result.getInt("isVacation") == 1); // Conversion du nombre en booléen
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return period;
+    }
 
 
 	@Override

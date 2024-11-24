@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import BE.ouagueni.model.BookingPOJO;
 import BE.ouagueni.model.InstructorPOJO;
 import BE.ouagueni.model.SkierPOJO;
 
@@ -74,6 +75,38 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
         return instructor;
     }
     
+    public InstructorPOJO getInstructorById(int idInstru) {
+        InstructorPOJO instructor = null;
+        
+        // Requête SQL avec un paramètre lié
+        String query = "SELECT * FROM Instructor i WHERE id = ?";
+
+        try (PreparedStatement stmt = this.connect.prepareStatement(query)) {
+            // Lier le paramètre pour éviter les injections SQL
+            stmt.setInt(1, idInstru);
+            
+            try (ResultSet result = stmt.executeQuery()) {
+                while (result.next()) {
+                    if (instructor == null) {
+                        // Création de l'objet InstructorPOJO
+                        instructor = new InstructorPOJO();
+                        instructor.setId(result.getInt("id"));
+                        instructor.setNom(result.getString("nom"));
+                        instructor.setPrenom(result.getString("prenom"));
+                        instructor.setDateNaissance(result.getDate("dateNaissance"));
+                        instructor.setExperience(result.getInt("experience"));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return instructor;
+    }
     
     public List<InstructorPOJO> getAllInstructorsNotInBooking() {
         List<InstructorPOJO> instructors = new ArrayList<>();

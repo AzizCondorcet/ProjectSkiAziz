@@ -14,6 +14,8 @@ public class LessonPOJO implements Serializable {
     private int minBookings;
     private int maxBookings;
     private int CurrentBooking;
+    private LessonTypePOJO Lessontype;
+    private InstructorPOJO Instructor;
     
 	public LessonPOJO(String name,int id,int minBookings, int maxBookings) {
 		super();
@@ -21,6 +23,9 @@ public class LessonPOJO implements Serializable {
 		this.id=id;
 		this.minBookings = minBookings;
 		this.maxBookings = maxBookings;
+	}
+	public LessonPOJO() {
+		super();
 	}
 	public LessonPOJO(String name,int id,int minBookings, int maxBookings,int CurrentBooking) {
 		super();
@@ -37,6 +42,35 @@ public class LessonPOJO implements Serializable {
 		this.id=id;
 		this.minBookings = minBookings;
 		this.maxBookings = maxBookings;
+	}
+	
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public void setCurrentBooking(int currentBooking) {
+		CurrentBooking = currentBooking;
+	}
+	public LessonTypePOJO getLessontype() {
+		return Lessontype;
+	}
+	public void setLessontype(LessonTypePOJO lessontype) {
+		Lessontype = lessontype;
+	}
+	public InstructorPOJO getInstructor() {
+		return Instructor;
+	}
+	public void setInstructor(InstructorPOJO instructor) {
+		Instructor = instructor;
 	}
 	public int getCurrentBooking() {
 		return CurrentBooking;
@@ -108,5 +142,9 @@ public class LessonPOJO implements Serializable {
 		LessonDAO lessonDAO = new LessonDAO(EcoleConnection.getInstance().getConnect());
 		return lessonDAO.getAvailableLessons();
 	}
+    public static LessonPOJO getLessonById(int idLesson) {
+    	LessonDAO lessonDAO = new LessonDAO(EcoleConnection.getInstance().getConnect());
+        return lessonDAO.getLessonById(idLesson); 
+    }
     
 }

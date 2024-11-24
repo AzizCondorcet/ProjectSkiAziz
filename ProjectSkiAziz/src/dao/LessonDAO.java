@@ -11,6 +11,7 @@ import java.util.List;
 
 import BE.ouagueni.model.InstructorPOJO;
 import BE.ouagueni.model.LessonPOJO;
+import BE.ouagueni.model.LessonTypePOJO;
 import BE.ouagueni.model.SkierPOJO;
 import singleton.EcoleConnection;
 
@@ -89,6 +90,57 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
 
         return lessons;
     }
+    public LessonPOJO getLessonById(int idLesson) {
+        LessonPOJO lesson = null;
+        String query = 
+            "SELECT l.id AS lesson_id, l.lessonType_id, l.instructor_id, l.minBookings, l.maxBookings, " +
+            "       lt.lesson_level, lt.price, " +
+            "       i.nom AS instructor_nom, i.prenom AS instructor_prenom, i.dateNaissance AS instructor_dateNaissance, i.experience AS instructor_experience " +
+            "FROM Lesson l " +
+            "JOIN LessonType lt ON l.lessonType_id = lt.id " +
+            "JOIN Instructor i ON l.instructor_id = i.id " +
+            "WHERE l.id = ?";
+
+        try (PreparedStatement stmt = this.connect.prepareStatement(query)) {
+            stmt.setInt(1, idLesson);   // Remplacer '?' par l'ID de la leçon
+            
+            try (ResultSet result = stmt.executeQuery()) {
+                if (result.next()) {
+                    // Création de l'objet LessonPOJO
+                    lesson = new LessonPOJO();
+                    lesson.setId(result.getInt("lesson_id"));
+                    lesson.setMinBookings(result.getInt("minBookings"));
+                    lesson.setMaxBookings(result.getInt("maxBookings"));
+
+                    // Informations sur LessonType
+                    LessonTypePOJO lessonType = new LessonTypePOJO();
+                    lessonType.setId(result.getInt("lessonType_id"));
+                    lessonType.setLevel(result.getString("lesson_level"));
+                    lessonType.setPrice(result.getBigDecimal("price"));
+
+                    // Informations sur Instructor
+                    InstructorPOJO instructor = new InstructorPOJO();
+                    instructor.setId(result.getInt("instructor_id"));
+                    instructor.setNom(result.getString("instructor_nom"));
+                    instructor.setPrenom(result.getString("instructor_prenom"));
+                    instructor.setDateNaissance(result.getDate("instructor_dateNaissance"));
+                    instructor.setExperience(result.getInt("instructor_experience"));
+
+                    // Associer les objets à la leçon
+                    lesson.setLessontype(lessonType);  // Remplacer lessonTypeId par l'objet lessonType
+                    lesson.setInstructor(instructor);  // Remplacer instructorId par l'objet instructor
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lesson;
+    }
+
+
     public List<LessonPOJO> getAvailableLessons() {
         List<LessonPOJO> lessons = new ArrayList<>();
         String query = """
