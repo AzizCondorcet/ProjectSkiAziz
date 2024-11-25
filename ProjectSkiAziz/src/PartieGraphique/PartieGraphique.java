@@ -79,7 +79,69 @@ public class PartieGraphique extends JFrame {
         JButton InstructorSeeHisBooking = createButton("Instructor See His Booking", 500, 160);
         contentPane.add(InstructorSeeHisBooking);
         
+        // bouton "InstructorSeeHisAccreditation"
+        JButton InstructorSeeHisAccreditation = createButton("Instructor See His Accreditation ", 500, 220);
+        contentPane.add(InstructorSeeHisAccreditation);
+        
         // Action des boutons
+        
+        InstructorSeeHisAccreditation.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Liste pour stocker les accréditations
+                List<AccreditationPOJO> ListAccreditation;
+                // Récupérer tous les instructeurs
+                List<InstructorPOJO> instructors = InstructorPOJO.getAllInstructor();
+                
+                // Construire la liste des instructeurs pour l'afficher
+                StringBuilder instructorList = new StringBuilder("Liste des Instructeurs :\n");
+                for (int i = 0; i < instructors.size(); i++) {
+                    InstructorPOJO instructor = instructors.get(i);
+                    instructorList.append(i + 1).append(". ").append(instructor.getNom())
+                                  .append(" ").append(instructor.getPrenom()).append("\n");
+                }
+
+                // Demander à l'utilisateur de sélectionner un instructeur
+                String selectedInstructorIndexStr = JOptionPane.showInputDialog(
+                    instructorList.toString() + "Sélectionnez un instructeur (numéro) :"
+                );
+
+                try {
+                    int selectedInstructorIndex = Integer.parseInt(selectedInstructorIndexStr) - 1;
+
+                    // Récupérer les accréditations de l'instructeur sélectionné
+                    ListAccreditation = AccreditationPOJO.getAccreditationByInstruId(
+                        instructors.get(selectedInstructorIndex).getId()
+                    );
+
+                    // Construire la liste des accréditations pour l'afficher
+                    StringBuilder AccreditationList = new StringBuilder(
+                        "Accréditations de " + instructors.get(selectedInstructorIndex).getNom() + " :\n"
+                    );
+
+                    if (ListAccreditation.isEmpty()) {
+                        AccreditationList.append("Aucune accréditation trouvée.\n");
+                    } else {
+                        for (AccreditationPOJO accreditation : ListAccreditation) {
+                            AccreditationList.append("- ").append(accreditation.getName())
+                                             .append(" (Type de leçon : ")
+                                             .append(accreditation.getLT().getLevel()).append(")\n");
+                        }
+                    }
+
+                    // Afficher les accréditations
+                    JOptionPane.showMessageDialog(null, AccreditationList.toString());
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Entrée invalide. Veuillez saisir un numéro.");
+                } catch (IndexOutOfBoundsException ex) {
+                    JOptionPane.showMessageDialog(null, "Numéro invalide. Veuillez réessayer.");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Une erreur est survenue. Veuillez réessayer.");
+                }
+            }
+        });
+
+        
         InstructorSeeHisBooking.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 List<BookingPOJO> ListBooking;

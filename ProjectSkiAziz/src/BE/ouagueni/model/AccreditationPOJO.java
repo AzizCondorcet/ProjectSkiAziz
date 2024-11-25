@@ -5,16 +5,32 @@ import java.util.List;
 import java.util.Objects;
 
 import dao.AccreditationDAO;
+import dao.BookingDAO;
+import singleton.EcoleConnection;
 
 public class AccreditationPOJO implements Serializable {
     private String name;
     private int id;
+    private LessonTypePOJO LT;
     
 	public AccreditationPOJO(String name) {
 		super();
 		this.name = name;
 	}
+	public AccreditationPOJO(int id,String name,LessonTypePOJO LT) {
+		super();
+		this.name = name;
+		this.id=id;
+		this.LT=LT;
+		
+	}
     
+	public LessonTypePOJO getLT() {
+		return LT;
+	}
+	public void setLT(LessonTypePOJO lT) {
+		LT = lT;
+	}
 	public int getId() {
 	    return id;
 	}
@@ -69,7 +85,11 @@ public class AccreditationPOJO implements Serializable {
         AccreditationDAO accreditationDAO = new AccreditationDAO();
         return accreditationDAO.getAllAccreditations();
     }
-
+    
+    public static List<AccreditationPOJO> getAccreditationByInstruId(int instructorId) {
+    	AccreditationDAO accreditationDAO = new AccreditationDAO(EcoleConnection.getInstance().getConnect());
+    	return accreditationDAO.getAccreditationByInstruId(instructorId);
+    }
     
 }
 

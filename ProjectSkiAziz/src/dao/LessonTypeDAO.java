@@ -67,4 +67,34 @@ public class LessonTypeDAO extends DAO_Generique<InstructorPOJO> {
 
 	        return lessonTypes;
 	    }
+	 public LessonTypePOJO getLessonTypeById(int idLessonType) {
+		    LessonTypePOJO lessonType = null;
+		    String query = "SELECT id, lesson_level, price FROM LessonType WHERE id = ?";
+
+		    try (PreparedStatement statement = connect.prepareStatement(query)) {
+		        // Paramétrer l'ID du type de leçon
+		        statement.setInt(1, idLessonType);
+
+		        // Exécuter la requête
+		        ResultSet resultSet = statement.executeQuery();
+
+		        // Si une correspondance est trouvée, créer un objet LessonTypePOJO
+		        if (resultSet.next()) {
+		            int id = resultSet.getInt("id");
+		            String level = resultSet.getString("lesson_level");
+		            BigDecimal price = resultSet.getBigDecimal("price");
+
+		            lessonType = new LessonTypePOJO();
+		            lessonType.setId(id);
+		            lessonType.setLevel(level);
+		            lessonType.setPrice(price);
+		        }
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+
+		    return lessonType;
+		}
+	 
 }

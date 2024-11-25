@@ -10,6 +10,7 @@ import java.util.List;
 
 import BE.ouagueni.model.AccreditationPOJO;
 import BE.ouagueni.model.InstructorPOJO;
+import BE.ouagueni.model.LessonTypePOJO;
 import singleton.EcoleConnection;
 
 public class AccreditationDAO extends DAO_Generique<InstructorPOJO>{
@@ -96,5 +97,44 @@ public class AccreditationDAO extends DAO_Generique<InstructorPOJO>{
         
         return accreditations;
     }
+	public List<AccreditationPOJO> getAccreditationByInstruId(int instructorId) {
+	    List<AccreditationPOJO> accreditations = new ArrayList<>();
+	    String query = """
+	        SELECT a.id, a.name, a.lessonType_id
+	        FROM Accreditation a
+	        JOIN LessonType lt ON a.lessonType_id = lt.id
+	        JOIN Lesson l ON lt.id = l.lessonType_id
+	        WHERE l.instructor_id = ?
+	    """;
+
+	    try (PreparedStatement statement = connect.prepareStatement(query)) {
+	        // Paramétrer l'ID de l'instructeur
+	        statement.setInt(1, instructorId);
+
+	        // Exécuter la requête
+	        ResultSet resultSet = statement.executeQuery();
+
+	        // Parcourir les résultats et ajouter les accréditations à la liste
+	        while (resultSet.next()) {
+	            int accreditationId = resultSet.getInt("id");
+	            String name = resultSet.getString("name");
+	            int lessonTypeId = resultSet.getInt("lessonType_id");
+
+	            // Récupérer l'objet LessonTypePOJO associé
+	            LessonTypePOJO lessonType = LessonTypePOJO.getLessonTypeById(lessonTypeId); 
+	            // Assurez-vous que la méthode getLessonTypeById existe dans LessonTypePOJO
+
+	            // Créer une nouvelle instance d'AccreditationPOJO
+	            AccreditationPOJO accreditation = new AccreditationPOJO(accreditationId, name, lessonType);
+	            accreditations.add(accreditation);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return accreditations;
+	}
+
 
 }

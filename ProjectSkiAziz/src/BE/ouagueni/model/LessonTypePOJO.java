@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import dao.LessonTypeDAO;
+import singleton.EcoleConnection;
 
 public class LessonTypePOJO implements Serializable {
     private String level;
@@ -69,5 +70,9 @@ public class LessonTypePOJO implements Serializable {
 	public static List<LessonTypePOJO> getAllLessonTypes() {
         LessonTypeDAO lessonTypeDAO = new LessonTypeDAO();
         return lessonTypeDAO.getAllLessonTypes(); 
+    }
+	public static LessonTypePOJO getLessonTypeById(int LTid) {
+        LessonTypeDAO lessonTypeDAO = new LessonTypeDAO(EcoleConnection.getInstance().getConnect());
+        return lessonTypeDAO.getLessonTypeById(LTid); 
     }
 }
