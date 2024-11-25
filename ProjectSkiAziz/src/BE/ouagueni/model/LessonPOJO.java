@@ -110,7 +110,9 @@ public class LessonPOJO implements Serializable {
 	           "ID : " + id + "\n" +
 	           "Réservations actuelles : " + CurrentBooking + "\n" +
 	           "Nombre minimum de réservations : " + minBookings + "\n" +
-	           "Nombre maximum de réservations : " + maxBookings + "\n";
+	           "Nombre maximum de réservations : " + maxBookings + "\n" +
+	           "Type de leçon : " + (Lessontype != null ? Lessontype.toString() : "Aucun type de leçon associé") + "\n" +
+	           "Instructeur : " + (Instructor != null ? Instructor.toString() : "Aucun instructeur associé");
 	}
 
 

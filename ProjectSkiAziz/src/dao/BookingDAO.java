@@ -182,7 +182,16 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
                 InstructorPOJO instructor = InstructorPOJO.getInstructorById(instructorId); // Même chose pour Instructor
                 LessonPOJO lesson = null;
                 if (lessonId > 0) {  // Vérifier si l'ID de la leçon est valide
+                	System.out.println(lessonId);
                     lesson = LessonPOJO.getLessonById(lessonId); // Idem pour Lesson
+                    System.out.println("Lesson ToString : ");
+                    System.out.println("+++++++++++++++++++++++++++");
+                    System.out.println(lesson.toString());
+                    System.out.println("+++++++++++++++++++++++++++");
+                }
+                else
+                {
+                	System.out.println("LessonID est 0");
                 }
                 PeriodPOJO period = PeriodPOJO.getPeriodById(periodId); // Idem pour Period
 

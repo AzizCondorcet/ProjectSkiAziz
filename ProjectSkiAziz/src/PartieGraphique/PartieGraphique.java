@@ -111,7 +111,7 @@ public class PartieGraphique extends JFrame {
                     bookingDetails += "Nombre de participants: " + booking.getNombreParticipants() + "\n";
                     
                     // Afficher les détails de la leçon avec vérification pour null
-                    bookingDetails += "Leçon: " + (booking.getLesson() != null ? booking.getLesson().getName() : "Non spécifié") + "\n";
+                    bookingDetails += "Leçonn: " + (booking.getLesson() != null ? booking.getLesson().getName() : "Non spécifié") + "\n";
 
                     
                     // Afficher les détails du skieur

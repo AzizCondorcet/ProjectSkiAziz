@@ -93,7 +93,7 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
     public LessonPOJO getLessonById(int idLesson) {
         LessonPOJO lesson = null;
         String query = 
-            "SELECT l.id AS lesson_id, l.lessonType_id, l.instructor_id, l.minBookings, l.maxBookings, " +
+            "SELECT l.id AS lesson_id,l.nam, l.lessonType_id, l.instructor_id, l.minBookings, l.maxBookings, " +
             "       lt.lesson_level, lt.price, " +
             "       i.nom AS instructor_nom, i.prenom AS instructor_prenom, i.dateNaissance AS instructor_dateNaissance, i.experience AS instructor_experience " +
             "FROM Lesson l " +
@@ -101,25 +101,38 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
             "JOIN Instructor i ON l.instructor_id = i.id " +
             "WHERE l.id = ?";
 
+        System.out.println("Executing query with ID: " + idLesson);
         try (PreparedStatement stmt = this.connect.prepareStatement(query)) {
-            stmt.setInt(1, idLesson);   // Remplacer '?' par l'ID de la leçon
-            
+            stmt.setInt(1, idLesson); 
             try (ResultSet result = stmt.executeQuery()) {
                 if (result.next()) {
+                    System.out.println("Query returned a result!");
                     // Création de l'objet LessonPOJO
                     lesson = new LessonPOJO();
+                    System.out.println("lesson_id "+result.getInt("lesson_id"));
+                    System.out.println("minBookings "+result.getInt("minBookings"));
+                    System.out.println("maxBookings "+result.getInt("maxBookings"));
                     lesson.setId(result.getInt("lesson_id"));
                     lesson.setMinBookings(result.getInt("minBookings"));
                     lesson.setMaxBookings(result.getInt("maxBookings"));
+                    lesson.setName(result.getString("nam"));
 
                     // Informations sur LessonType
                     LessonTypePOJO lessonType = new LessonTypePOJO();
+                    System.out.println("lessonType_id "+result.getInt("lessonType_id"));
+                    System.out.println("lesson_level "+result.getString("lesson_level"));
+                    System.out.println("price "+result.getBigDecimal("price"));
                     lessonType.setId(result.getInt("lessonType_id"));
                     lessonType.setLevel(result.getString("lesson_level"));
                     lessonType.setPrice(result.getBigDecimal("price"));
 
                     // Informations sur Instructor
                     InstructorPOJO instructor = new InstructorPOJO();
+                    System.out.println("instructor_id "+result.getInt("instructor_id"));
+                    System.out.println("instructor_nom "+result.getString("instructor_nom"));
+                    System.out.println("instructor_prenom "+result.getString("instructor_prenom"));
+                    System.out.println("instructor_dateNaissance "+result.getDate("instructor_dateNaissance"));
+                    System.out.println("instructor_experience "+result.getInt("instructor_experience"));
                     instructor.setId(result.getInt("instructor_id"));
                     instructor.setNom(result.getString("instructor_nom"));
                     instructor.setPrenom(result.getString("instructor_prenom"));
@@ -129,6 +142,8 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
                     // Associer les objets à la leçon
                     lesson.setLessontype(lessonType);  // Remplacer lessonTypeId par l'objet lessonType
                     lesson.setInstructor(instructor);  // Remplacer instructorId par l'objet instructor
+                } else {
+                    System.out.println("No lesson found with ID: " + idLesson);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -136,7 +151,10 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        System.out.println("La lesson dans Lesson DAO : ");
+        System.out.println("Lesson ToString :");
+        System.out.println(lesson.toString());
+        System.out.println("----------------------------");
         return lesson;
     }
 
