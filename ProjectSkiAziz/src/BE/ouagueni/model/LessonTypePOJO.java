@@ -18,6 +18,12 @@ public class LessonTypePOJO implements Serializable {
 		this.level = level;
 		this.price = price;
 	}
+	public LessonTypePOJO(int id,String level, BigDecimal price) {
+		super();
+		this.id=id;
+		this.level = level;
+		this.price = price;
+	}
 	public LessonTypePOJO() {
 		super();
 	}

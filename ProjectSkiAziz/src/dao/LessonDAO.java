@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,7 +32,7 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
                 connection = EcoleConnection.getInstance().getConnect(); // Réouvrir la connexion si fermée
             }
 
-            PreparedStatement stmt = connection.prepareStatement("SELECT id, minBookings, maxBookings \r\n"
+            PreparedStatement stmt = connection.prepareStatement("SELECT lesson_date,id, minBookings, maxBookings \r\n"
             		+ "        FROM Lesson l\r\n"
             		+ "        WHERE NOT EXISTS (\r\n"
             		+ "            SELECT 1\r\n"
@@ -42,10 +43,11 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
 
             while (rs.next()) {
             	int id = rs.getInt("id");
+                Date LessonDate = rs.getDate("lesson_date");
                 int minBookings = rs.getInt("minBookings");
                 int maxBookings = rs.getInt("maxBookings");
 
-                LessonPOJO lesson = new LessonPOJO(id,minBookings, maxBookings);
+                LessonPOJO lesson = new LessonPOJO(LessonDate,id,minBookings, maxBookings);
                 lessons.add(lesson);
             }
 
@@ -58,6 +60,63 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
 
         return lessons;
     }
+    public static List<LessonPOJO> getLessonsByAgeCategory(boolean isChild) {
+        List<LessonPOJO> filteredLessons = new ArrayList<>();
+        try (Connection connection = EcoleConnection.getInstance().getConnect()) {
+            String sql = "SELECT l.*, lt.id AS lt_id, lt.lesson_level AS lt_level, "
+                       + "lt.price AS lt_price, i.id AS i_id, i.nom AS i_nom, i.prenom AS i_prenom, "
+                       + "i.dateNaissance AS i_dateNaissance, i.experience AS i_experience "
+                       + "l.lesson_date AS lesson_date " 
+                       + "FROM Lesson l "
+                       + "JOIN LessonType lt ON l.lessonType_id = lt.id "
+                       + "JOIN Instructor i ON l.instructor_id = i.id "
+                       + "WHERE lt.id BETWEEN ? AND ?";
+            
+            PreparedStatement ps = connection.prepareStatement(sql);
+            
+            if (isChild) {
+                ps.setInt(1, 1);  // IDs pour niveaux enfants
+                ps.setInt(2, 11);  // Fin des niveaux enfants
+            } else {
+                ps.setInt(1, 12); // IDs pour niveaux adultes
+                ps.setInt(2, 18); // Fin des niveaux adultes
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                // Créer l'objet LessonTypePOJO
+                LessonTypePOJO lessonType = new LessonTypePOJO();
+                lessonType.setId(rs.getInt("lt_id"));
+                lessonType.setLevel(rs.getString("lt_level")); // Champ corrigé
+                lessonType.setPrice(rs.getBigDecimal("lt_price"));
+
+                // Créer l'objet InstructorPOJO
+                InstructorPOJO instructor = new InstructorPOJO(
+                    rs.getInt("i_id"),
+                    rs.getString("i_nom"),
+                    rs.getString("i_prenom"),
+                    rs.getDate("i_dateNaissance"),
+                    rs.getInt("i_experience")
+                );
+
+                // Créer l'objet LessonPOJO
+                LessonPOJO lesson = new LessonPOJO(
+                	rs.getDate("lesson_date"),
+                    rs.getInt("id"),        // ID de la leçon
+                    lessonType,             // Objet LessonTypePOJO
+                    instructor,             // Objet InstructorPOJO
+                    rs.getInt("minBookings"),
+                    rs.getInt("maxBookings")
+                );
+
+                // Ajouter la leçon à la liste filtrée
+                filteredLessons.add(lesson);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return filteredLessons;
+    }
     public List<LessonPOJO> getAllLessons() {
     	List<LessonPOJO> lessons = new ArrayList<>();
         try {
@@ -68,16 +127,17 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
                 connection = EcoleConnection.getInstance().getConnect(); // Réouvrir la connexion si fermée
             }
 
-            PreparedStatement stmt = connect.prepareStatement("SELECT id, nam, minBookings, maxBookings FROM Lesson l");
+            PreparedStatement stmt = connect.prepareStatement("SELECT lesson_date,id, nam, minBookings, maxBookings FROM Lesson l");
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+            	Date LessonDate = rs.getDate("lesson_date");
             	int id = rs.getInt("id");
             	String name = rs.getString("nam");
                 int minBookings = rs.getInt("minBookings");
                 int maxBookings = rs.getInt("maxBookings");
 
-                LessonPOJO lesson = new LessonPOJO(name,id,minBookings, maxBookings);
+                LessonPOJO lesson = new LessonPOJO(LessonDate,name,id,minBookings, maxBookings);
                 lessons.add(lesson);
             }
 
@@ -162,7 +222,7 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
     public List<LessonPOJO> getAvailableLessons() {
         List<LessonPOJO> lessons = new ArrayList<>();
         String query = """
-            SELECT l.id, l.nam, l.minBookings, l.maxBookings, 
+            SELECT l.id, l.lesson_date,l.nam, l.minBookings, l.maxBookings, 
                    NVL(COUNT(b.id), 0) AS currentBookings
             FROM Lesson l
             LEFT JOIN Booking b ON l.id = b.lesson_id
@@ -174,6 +234,7 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 lessons.add(new LessonPOJO(
+                	 rs.getDate("lesson_date"),
 	        		 rs.getString("nam"),         // Utiliser getString pour les colonnes VARCHAR
 	                 rs.getInt("id"),             // Utiliser getInt pour les colonnes NUMBER/INT
 	                 rs.getInt("minBookings"),   

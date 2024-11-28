@@ -20,6 +20,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -83,6 +86,7 @@ public class PartieGraphique extends JFrame {
         JButton InstructorSeeHisAccreditation = createButton("Instructor See His Accreditation ", 500, 220);
         contentPane.add(InstructorSeeHisAccreditation);
         
+      
         // Action des boutons
         
         InstructorSeeHisAccreditation.addActionListener(new ActionListener() {
@@ -225,25 +229,40 @@ public class PartieGraphique extends JFrame {
         	            JOptionPane.showMessageDialog(null, "Entrée invalide. Veuillez entrer un numéro.");
         	            return;
         	        }
-        	        
-        	     // Récupérer la liste des leçons disponibles
-        	        List<LessonPOJO> lessons = LessonPOJO.getAllLessons();
+
+        	        SkierPOJO selectedSkier = skiers.get(selectedSkierIndex);
+        	        java.sql.Date sqlDate = (java.sql.Date) selectedSkier.getDateNaissance();
+        	        LocalDate birthLocalDate = sqlDate.toLocalDate();
+        	        LocalDate today = LocalDate.now();
+
+        	        // Calculer l'âge
+        	        int age = Period.between(birthLocalDate, today).getYears();
+        	        // Déterminer la catégorie d'âge (enfant ou adulte)
+        	        boolean isChild = age < 18;
+        	        // Filtrer les leçons disponibles en fonction de l'âge
+        	        List<LessonPOJO> lessons = LessonPOJO.getLessonsByAgeCategory(isChild);
+        	        if (lessons.isEmpty()) {
+        	            JOptionPane.showMessageDialog(null, "Aucune leçon disponible pour cette catégorie.");
+        	            return;
+        	        }
+        	     // Afficher les leçons disponibles pour la sélection
         	        StringBuilder lessonsList = new StringBuilder("Leçons disponibles :\n");
         	        for (int i = 0; i < lessons.size(); i++) {
         	            lessonsList.append(i + 1).append(". ").append(lessons.get(i).getid()).append("\n");
         	        }
         	        String selectedLessonIndexStr = JOptionPane.showInputDialog(null, lessonsList.toString() + "Sélectionnez une leçon (numéro) :");
         	        int selectedLessonIndex = Integer.parseInt(selectedLessonIndexStr) - 1;
-        	        
+        	        System.out.println("indec selectedLessonIndex : " + selectedLessonIndex);
         	     // Récupérer la liste des instructeurs disponibles
-        	        List<InstructorPOJO> instructors = InstructorPOJO.getAllInstructor();
+        	        List<InstructorPOJO> instructors = InstructorPOJO.getAllInstructorNotInBooking();
         	        StringBuilder instructorsList = new StringBuilder("Instructeurs disponibles :\n");
         	        for (int i = 0; i < instructors.size(); i++) {
         	            instructorsList.append(i + 1).append(". ").append(instructors.get(i).getNom()).append("\n");
         	        }
         	        String selectedInstructorIndexStr = JOptionPane.showInputDialog(null, instructorsList.toString() + "Sélectionnez un instructeur (numéro) :");
         	        int selectedInstructorIndex = Integer.parseInt(selectedInstructorIndexStr) - 1;
-        	        
+        	        System.out.println("indec selectedInstructorIndex : " + selectedInstructorIndex);
+        	        System.out.println("2");
         	     // Récupérer la liste des périodes disponibles
         	        List<PeriodPOJO> periods = PeriodPOJO.getAllPeriod();
         	        StringBuilder periodsList = new StringBuilder("Périodes disponibles :\n");

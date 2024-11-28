@@ -146,11 +146,19 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
     public List<InstructorPOJO> getAllInstructor() {
         List<InstructorPOJO> instructors = new ArrayList<>();
         String query = "SELECT * FROM Instructor i";
-
+        System.out.println("3.6");
+        // Assurez-vous que la connexion reste ouverte durant l'exécution
         try (PreparedStatement statement = connect.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            // Parcours des résultats
+                ResultSet resultSet = statement.executeQuery()) {
+        	if (connect == null || connect.isClosed()) {
+        	    throw new SQLException("La connexion est fermée ou nulle");
+        	}
+        	System.out.println("3.5");
+        	if (connect == null || connect.isClosed()) {
+        	    throw new SQLException("La connexion est fermée ou nulle");
+        	}
+        	System.out.println("3");
+        	System.out.println("Connexion ouverte ? " + !connect.isClosed());
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String nom = resultSet.getString("nom");
@@ -158,7 +166,6 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
                 Date dateNaissance = resultSet.getDate("dateNaissance");
                 int experience = resultSet.getInt("experience");
 
-                // Création de l'objet InstructorPOJO avec les données récupérées
                 InstructorPOJO instructor = new InstructorPOJO(id, nom, prenom, dateNaissance, experience);
                 instructors.add(instructor);
             }
@@ -166,8 +173,9 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return instructors; // Retourner la liste des instructeurs
+        return instructors;
     }
+
     
 	@Override
 	public InstructorPOJO find(int id) {

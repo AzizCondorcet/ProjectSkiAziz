@@ -1,6 +1,7 @@
 package BE.ouagueni.model;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,11 +15,13 @@ public class LessonPOJO implements Serializable {
     private int minBookings;
     private int maxBookings;
     private int CurrentBooking;
+    private Date lesson_date;
     private LessonTypePOJO Lessontype;
     private InstructorPOJO Instructor;
     
-	public LessonPOJO(String name,int id,int minBookings, int maxBookings) {
+	public LessonPOJO(Date lesson_date,String name,int id,int minBookings, int maxBookings) {
 		super();
+		this.lesson_date=lesson_date;
 		this.name=name;
 		this.id=id;
 		this.minBookings = minBookings;
@@ -27,8 +30,9 @@ public class LessonPOJO implements Serializable {
 	public LessonPOJO() {
 		super();
 	}
-	public LessonPOJO(String name,int id,int minBookings, int maxBookings,int CurrentBooking) {
+	public LessonPOJO(Date lesson_date,String name,int id,int minBookings, int maxBookings,int CurrentBooking) {
 		super();
+		this.lesson_date=lesson_date;
 		this.name=name;
 		this.id=id;
 		this.minBookings = minBookings;
@@ -36,14 +40,24 @@ public class LessonPOJO implements Serializable {
 		this.CurrentBooking= CurrentBooking;
 	}
 
-	public LessonPOJO(int id, int minBookings, int maxBookings)
+	public LessonPOJO(Date lesson_date,int id, int minBookings, int maxBookings)
 	{
 		super();
+		this.lesson_date=lesson_date;
 		this.id=id;
 		this.minBookings = minBookings;
 		this.maxBookings = maxBookings;
 	}
-	
+	public LessonPOJO(Date lesson_date,int id, LessonTypePOJO Lessontype, InstructorPOJO Instructor,int minBookings, int maxBookings)
+	{
+		super();
+		this.lesson_date=lesson_date;
+		this.id=id;
+		this.Lessontype=Lessontype;
+		this.Instructor=Instructor;
+		this.minBookings = minBookings;
+		this.maxBookings = maxBookings;
+	}
 	
 	public int getId() {
 		return id;
@@ -139,6 +153,10 @@ public class LessonPOJO implements Serializable {
 	public static List<LessonPOJO> getAllLessons() {
         LessonDAO lessonDAO = new LessonDAO(EcoleConnection.getInstance().getConnect());
         return lessonDAO.getAllLessons();
+    }
+	public static List<LessonPOJO> getLessonsByAgeCategory(boolean isChild) {
+        LessonDAO lessonDAO = new LessonDAO(EcoleConnection.getInstance().getConnect());
+        return lessonDAO.getLessonsByAgeCategory(isChild);
     }
 	public static List<LessonPOJO> getAvailableLessons(){
 		LessonDAO lessonDAO = new LessonDAO(EcoleConnection.getInstance().getConnect());
