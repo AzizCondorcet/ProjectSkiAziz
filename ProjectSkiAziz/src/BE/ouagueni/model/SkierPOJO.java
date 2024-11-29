@@ -68,6 +68,10 @@ public class SkierPOJO extends PersonnePOJO {
         SkierDAO SkierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
         return SkierDAO.getAllSkiersNotInBooking();
     }
+    public static List<SkierPOJO> getAllSkiersInBooking() {
+        SkierDAO SkierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
+        return SkierDAO.getAllSkiersInBooking();
+    }
     public static List<SkierPOJO> getAllSkiers() {
         SkierDAO SkierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
         return SkierDAO.getAllSkiers();
@@ -79,6 +83,11 @@ public class SkierPOJO extends PersonnePOJO {
     public static SkierPOJO findByNameAndSurname(String Nom,String Prenom) {
         SkierDAO skierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
         return skierDAO.findByNameAndSurname(Nom,Prenom); 
+    }
+    public static int HaveToPay(int selectedSkierIndex) {
+    	System.out.println("papa");
+        SkierDAO skierDAO = new SkierDAO(EcoleConnection.getInstance().getConnect());
+        return skierDAO.HaveToPay(selectedSkierIndex); 
     }
 
     public static SkierPOJO getSkierById(int idSkier) {

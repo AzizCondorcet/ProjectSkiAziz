@@ -86,8 +86,44 @@ public class PartieGraphique extends JFrame {
         JButton InstructorSeeHisAccreditation = createButton("Instructor See His Accreditation ", 500, 220);
         contentPane.add(InstructorSeeHisAccreditation);
         
+     // bouton "HowMushPaySkier"
+        JButton HowMushPaySkier = createButton("How Much Pay a Skier ", 500, 280);
+        contentPane.add(HowMushPaySkier);
+        
       
         // Action des boutons
+        
+        HowMushPaySkier.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	// Récupérer la liste des skieurs existants
+    	        List<SkierPOJO> skiers = SkierPOJO.getAllSkiersInBooking();
+    	        if (skiers.isEmpty()) {
+    	            JOptionPane.showMessageDialog(null, "Aucun skieur disponible. Veuillez d'abord en créer un.");
+    	            return; // Arrêter si aucun skieur n'est disponible
+    	        }
+    	        // Afficher la liste des skieurs pour la sélection
+    	        StringBuilder skierList = new StringBuilder("Sélectionnez un skieur existant :\n");
+    	        for (int i = 0; i < skiers.size(); i++) {
+    	            skierList.append(i + 1).append(". ").append(skiers.get(i).getNom())
+    	                     .append(" ").append(skiers.get(i).getPrenom()).append("\n");
+    	        }
+    	        String selectedSkierIndexStr = JOptionPane.showInputDialog(null, skierList.toString() + "Entrez le numéro du skieur :");
+    	        int selectedSkierIndex;
+    	        try {
+    	            selectedSkierIndex = Integer.parseInt(selectedSkierIndexStr) - 1;
+    	            if (selectedSkierIndex < 0 || selectedSkierIndex >= skiers.size()) {
+    	                JOptionPane.showMessageDialog(null, "Numéro invalide. Veuillez réessayer.");
+    	                return;
+    	            }
+    	        } catch (NumberFormatException ex) {
+    	            JOptionPane.showMessageDialog(null, "Entrée invalide. Veuillez entrer un numéro.");
+    	            return;
+    	        }
+    	        int selectedSkierIndexF = selectedSkierIndex + 1;
+    	        int HaveToPay = SkierPOJO.HaveToPay(selectedSkierIndexF);
+    	        JOptionPane.showMessageDialog(null, "Le Skier doit payer la somme de " + HaveToPay);
+            }
+         });
         
         InstructorSeeHisAccreditation.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

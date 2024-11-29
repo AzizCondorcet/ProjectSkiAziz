@@ -15,6 +15,7 @@ public class LessonPOJO implements Serializable {
     private int minBookings;
     private int maxBookings;
     private int CurrentBooking;
+    private int LessonType_id;
     private Date lesson_date;
     private LessonTypePOJO Lessontype;
     private InstructorPOJO Instructor;
@@ -58,7 +59,25 @@ public class LessonPOJO implements Serializable {
 		this.minBookings = minBookings;
 		this.maxBookings = maxBookings;
 	}
+	public LessonPOJO(Date lesson_date,int lessonType_id)
+	{
+		super();
+		this.lesson_date=lesson_date;
+		this.LessonType_id=lessonType_id;
+	}
 	
+	public int getLessonType_id() {
+		return LessonType_id;
+	}
+	public void setLessonType_id(int lessonType_id) {
+		LessonType_id = lessonType_id;
+	}
+	public Date getLesson_date() {
+		return lesson_date;
+	}
+	public void setLesson_date(Date lesson_date) {
+		this.lesson_date = lesson_date;
+	}
 	public int getId() {
 		return id;
 	}
