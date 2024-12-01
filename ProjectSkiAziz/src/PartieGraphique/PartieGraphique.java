@@ -35,7 +35,7 @@ public class PartieGraphique extends JFrame {
     public PartieGraphique() {
         setTitle("Gestionn École de Ski");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 600, 500);  // Augmenter la taille de la fenêtre
+        setBounds(100, 100, 1000, 500);  // Augmenter la taille de la fenêtre
         setLocationRelativeTo(null);  // Centrer la fenêtre
 
         contentPane = new JPanel();
@@ -45,9 +45,9 @@ public class PartieGraphique extends JFrame {
         setContentPane(contentPane);
 
         // Titre
-        JLabel lblTitle = new JLabel("Gestion de l'École de Ski");
+        JLabel lblTitle = new JLabel("Gestion de l'École de Ski", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        lblTitle.setBounds(120, 30, 350, 40);
+        lblTitle.setBounds(100, 30, 400, 40);
         contentPane.add(lblTitle);
 
         // Bouton "Afficher les réservations"
@@ -643,14 +643,40 @@ public class PartieGraphique extends JFrame {
                 if (bookings.isEmpty()) {
                     JOptionPane.showMessageDialog(contentPane, "Aucune réservation trouvée.");
                 } else {
-                    StringBuilder message = new StringBuilder("Réservations disponibles:\n");
+                    // Créer un StringBuilder pour formater les réservations
+                    StringBuilder message = new StringBuilder("<html><body style='font-family:Segoe UI; font-size:14px; color:#333;'>");
+                    message.append("<h3>Réservations disponibles:</h3>");
                     for (BookingPOJO booking : bookings) {
-                        message.append(booking.toString()).append("\n");
+                        message.append("<p>").append(booking.toString()).append("</p>");
                     }
-                    JOptionPane.showMessageDialog(contentPane, message.toString());
+                    message.append("</body></html>");
+
+                    // Créer un JTextArea pour afficher les réservations avec une police lisible et agréable
+                    JTextArea textArea = new JTextArea(message.toString());
+                    textArea.setEditable(false);  // Empêcher la modification du texte
+                    textArea.setLineWrap(true);   // Retour à la ligne automatique
+                    textArea.setWrapStyleWord(true);  // Retour à la ligne à la fin des mots
+                    textArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));  // Police plus moderne et lisible
+                    textArea.setBackground(new Color(0xF4F4F9));  // Fond clair pour une lecture agréable
+                    textArea.setForeground(new Color(0x333333));  // Texte sombre pour un bon contraste
+                    textArea.setCaretColor(Color.BLACK);  // Couleur du curseur
+                    textArea.setBorder(BorderFactory.createLineBorder(new Color(0x4CAF50), 2)); // Bordure verte
+                    textArea.setMargin(new Insets(10, 10, 10, 10));  // Espacement autour du texte
+
+                    // Ajouter le JTextArea dans un JScrollPane avec des barres de défilement automatiques
+                    JScrollPane scrollPane = new JScrollPane(textArea);
+                    scrollPane.setPreferredSize(new Dimension(600, 400)); // Taille de la fenêtre avec barre de défilement
+                    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS); // Barre verticale toujours visible
+                    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); // Barre horizontale toujours visible
+
+                    // Afficher dans un JOptionPane
+                    JOptionPane.showMessageDialog(contentPane, scrollPane, "Liste des réservations", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
+
+
+
 
         btnAfficherLecons.addActionListener(e -> {
             List<LessonPOJO> lessons = LessonPOJO.getAllLessons();
@@ -672,21 +698,21 @@ public class PartieGraphique extends JFrame {
     private JButton createButton(String text, int x, int y) {
         JButton button = new JButton(text);
         button.setBounds(x, y, 300, 40);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));  // Police moderne
-        button.setBackground(new Color(0x4CAF50));  // Couleur verte
-        button.setForeground(Color.WHITE);  // Texte en blanc
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14)); // Police moderne
+        button.setBackground(new Color(0xFFFFFF));          // Fond blanc
+        button.setForeground(new Color(0x333333));          // Texte gris foncé
         button.setFocusPainted(false);
         button.setOpaque(true);
-        button.setBorder(createRoundedBorder(10));  // Bord arrondi avec un rayon de 10
+        button.setBorder(createRoundedBorder(10));          // Bord arrondi avec un rayon de 10
 
         // Ajouter un effet de survol
         button.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent evt) {
-                button.setBackground(new Color(0x388E3C));  // Couleur au survol
+                button.setBackground(new Color(0xEEEEEE));  // Fond gris clair au survol
             }
 
             public void mouseExited(MouseEvent evt) {
-                button.setBackground(new Color(0x4CAF50));  // Retour à la couleur initiale
+                button.setBackground(new Color(0xFFFFFF));  // Retour au blanc
             }
         });
 
