@@ -329,150 +329,141 @@ public class PartieGraphique extends JFrame {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-    }
-});
+			    }
+			});
    
         
-        // Creation du bouton pour SkierChooseBooking
         btnNewSkierChooseBooking.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Ouvrir une boîte de dialogue ou une fenêtre pour saisir les informations du skieur
-                String nom = JOptionPane.showInputDialog("Entrez le nom :");
-                String prenom = JOptionPane.showInputDialog("Entrez le prénom :");
-                Date dateNaissance = null;
-                boolean validDate = false;
-
-                while (!validDate) {
+                while (true) { // Boucle pour redémarrer l'opération en cas d'erreur
                     try {
-                        String dateNaissanceStr = JOptionPane.showInputDialog("Entrez la date de naissance (format : jj/MM/aaaa) :");
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                        sdf.setLenient(false); // Empêche les dates invalides comme 30/02/2023
-                        dateNaissance = sdf.parse(dateNaissanceStr);
-                        validDate = true; // Si aucun ParseException n'est levé, la date est valide
-                    } catch (ParseException e1) {
-                        JOptionPane.showMessageDialog(null, "Date invalide. Veuillez entrer une date au format jj/MM/aaaa.", "Erreur", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-                boolean isChild = SkierPOJO.isUnder18(dateNaissance);
-                System.out.println(dateNaissance);
-                System.out.println(isChild);
-                String niveau = null;
-                while (true) {
-                    niveau = JOptionPane.showInputDialog("Entrez le niveau (Débutant/Intermédiaire/Avancé) :");
-                    if (niveau != null && (niveau.equalsIgnoreCase("Débutant") ||
-                                           niveau.equalsIgnoreCase("Intermédiaire") ||
-                                           niveau.equalsIgnoreCase("Avancé"))) {
-                        // Convertir la première lettre en majuscule pour normaliser l'entrée
-                        niveau = niveau.substring(0, 1).toUpperCase() + niveau.substring(1).toLowerCase();
-                        break; // Sortir de la boucle si l'entrée est valide
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Veuillez entrer un niveau valide : Débutant, Intermédiaire ou Avancé.");
-                    }
-                }
-                String assuranceInput = null;
-                boolean assurance = false;
-
-                while (true) {
-                    assuranceInput = JOptionPane.showInputDialog("Avez-vous une assurance ? (Oui/Non) :");
-                    if (assuranceInput != null && (assuranceInput.equalsIgnoreCase("oui") || assuranceInput.equalsIgnoreCase("non"))) {
-                        assurance = assuranceInput.equalsIgnoreCase("oui");
-                        break; // Sortir de la boucle si l'entrée est valide
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Veuillez répondre par 'Oui' ou 'Non'.");
-                    }
-                }
-                // Vérifier les champs saisis
-                if (nom != null && prenom != null && !nom.isBlank() && !prenom.isBlank()) {
-
-                    // Vérifier si la personne existe déjà
-                    if (SkierPOJO.checkIfPersonExists(nom, prenom)) {
-                        JOptionPane.showMessageDialog(null, "Ce skieur existe déjà dans la base de données !");
-                    } else {
-                        // Ajouter le skieur dans la base de données
-                    	boolean success = SkierPOJO.NewSkier(nom, prenom,dateNaissance, niveau, assurance);
-                    	SkierPOJO skier = SkierPOJO.findByNameAndSurname(nom, prenom);                     
-                    	if (success) {
-                            JOptionPane.showMessageDialog(null, "Le skieur a été ajouté avec succès !");
-                            List<LessonPOJO> lessons = LessonPOJO.getLessonsByAgeCategory(isChild);
-                            StringBuilder lessonsList = new StringBuilder("Leçons disponibles :\n");
-                            
-                            for (int i = 0; i < lessons.size(); i++) {
-                                lessonsList.append(i + 1).append(". ").append(lessons.get(i).getid()).append("\n");
-                            }
-                            String selectedLessonIndexStr = JOptionPane.showInputDialog(null, lessonsList.toString() + "Sélectionnez une leçon (numéro) :");
-                            int selectedLessonIndex = Integer.parseInt(selectedLessonIndexStr) - 1;  // Indice de la leçon sélectionnée
-                            
-                            // Récupérer l'instructeur disponible pour cette leçon
-                            List<InstructorPOJO> instructors = InstructorPOJO.getAllInstructor();
-                            StringBuilder instructorsList = new StringBuilder("Instructeurs disponibles :\n");
-                            for (int i = 0; i < instructors.size(); i++) {
-                                instructorsList.append(i + 1).append(". ").append(instructors.get(i).getNom()).append("\n");
-                            }
-                            String selectedInstructorIndexStr = JOptionPane.showInputDialog(null, instructorsList.toString() + "Sélectionnez un instructeur (numéro) :");
-                            int selectedInstructorIndex = Integer.parseInt(selectedInstructorIndexStr) - 1;
-                            
-                         // Récupérer la période disponible
-                            List<PeriodPOJO> periods = PeriodPOJO.getAllPeriod();
-                            StringBuilder periodsList = new StringBuilder("Périodes disponibles :\n");
-                            for (int i = 0; i < periods.size(); i++) {
-                                // Récupérer les dates de début et de fin de la période
-                                Date startDate = periods.get(i).getStartDate();
-                                Date endDate = periods.get(i).getEndDate();
-                                
-                                // Définir le format de la date
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  // Format : année-mois-jour
-                                
-                                // Formater les dates
-                                String formattedStartDate = sdf.format(startDate);
-                                String formattedEndDate = sdf.format(endDate);
-                                
-                                // Ajouter les dates formatées à la liste des périodes
-                                periodsList.append(i + 1).append(". ").append(formattedStartDate)
-                                           .append(" à ").append(formattedEndDate).append("\n");
-                            }
-                            
-                            String selectedPeriodIndexStr = JOptionPane.showInputDialog(null, periodsList.toString() + "Sélectionnez une période (numéro) :");
-                            int selectedPeriodIndex = Integer.parseInt(selectedPeriodIndexStr) - 1;
-                            
-                            LessonPOJO selectedLesson = lessons.get(selectedLessonIndex);
-                            InstructorPOJO selectedInstructor = instructors.get(selectedInstructorIndex);
-                            PeriodPOJO selectedPeriod = periods.get(selectedPeriodIndex);
-                            String NomBooking = JOptionPane.showInputDialog("Nom du booking : ");
-                            System.out.println("-----------------------------------");
-                            System.out.println(selectedLesson.getid());
-                            System.out.println("-----------------------------------");
-                            System.out.println(selectedInstructor.getId());
-                            System.out.println("-----------------------------------");
-                            System.out.println(selectedPeriod.getid());
-                            System.out.println("-----------------------------------");
-                            System.out.println(skier.getId());
-                            System.out.println("-----------------------------------");
-                            System.out.println(NomBooking);
-                            System.out.println("-----------------------------------");
-                           
-                            boolean bookingSuccess;
-							try {
-								bookingSuccess = BookingPOJO.AddBookingWithId(skier.getId(), selectedLesson.getid(), selectedInstructor.getId(), selectedPeriod.getid(),NomBooking);
-	                            System.out.println(bookingSuccess);
-	                            if (bookingSuccess) {
-	                                JOptionPane.showMessageDialog(null, "Réservation réussie !");
-	                            } else {
-	                                JOptionPane.showMessageDialog(null, "Erreur lors de la réservation.");
-	                            }
-							} catch (SQLException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de l'ajout du skieur.");
+                        // Étape 1 : Saisie des informations de base
+                        String nom = JOptionPane.showInputDialog("Entrez le nom :");
+                        String prenom = JOptionPane.showInputDialog("Entrez le prénom :");
+                        if (nom == null || prenom == null || nom.isBlank() || prenom.isBlank()) {
+                            JOptionPane.showMessageDialog(null, "Les champs nom et prénom sont obligatoires.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                            continue;
                         }
+
+                        // Étape 2 : Validation de la date de naissance
+                        Date dateNaissance = null;
+                        while (dateNaissance == null) {
+                            try {
+                                String dateNaissanceStr = JOptionPane.showInputDialog("Entrez la date de naissance (format : jj/MM/aaaa) :");
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                sdf.setLenient(false);
+                                dateNaissance = sdf.parse(dateNaissanceStr);
+                            } catch (ParseException e1) {
+                                JOptionPane.showMessageDialog(null, "Date invalide. Veuillez entrer une date au format jj/MM/aaaa.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+
+                        boolean isChild = SkierPOJO.isUnder18(dateNaissance);
+
+                        // Étape 3 : Validation du niveau
+                        String niveau = null;
+                        while (niveau == null) {
+                            niveau = JOptionPane.showInputDialog("Entrez le niveau (Débutant/Intermédiaire/Avancé) :");
+                            if (niveau != null && 
+                                (niveau.equalsIgnoreCase("Débutant") || 
+                                 niveau.equalsIgnoreCase("Intermédiaire") || 
+                                 niveau.equalsIgnoreCase("Avancé"))) {
+                                niveau = niveau.substring(0, 1).toUpperCase() + niveau.substring(1).toLowerCase();
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Veuillez entrer un niveau valide : Débutant, Intermédiaire ou Avancé.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                                niveau = null;
+                            }
+                        }
+
+                        // Étape 4 : Validation de l'assurance
+                        boolean assurance = false;
+                        while (true) {
+                            String assuranceInput = JOptionPane.showInputDialog("Avez-vous une assurance ? (Oui/Non) :");
+                            if (assuranceInput != null && 
+                                (assuranceInput.equalsIgnoreCase("oui") || assuranceInput.equalsIgnoreCase("non"))) {
+                                assurance = assuranceInput.equalsIgnoreCase("oui");
+                                break;
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Veuillez répondre par 'Oui' ou 'Non'.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+
+                        // Étape 5 : Vérifier si le skieur existe déjà
+                        if (SkierPOJO.checkIfPersonExists(nom, prenom)) {
+                            JOptionPane.showMessageDialog(null, "Ce skieur existe déjà dans la base de données !", "Erreur", JOptionPane.ERROR_MESSAGE);
+                            continue;
+                        }
+
+                        // Étape 6 : Ajouter le skieur
+                        boolean skieurAjoute = SkierPOJO.NewSkier(nom, prenom, dateNaissance, niveau, assurance);
+                        if (!skieurAjoute) {
+                            JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de l'ajout du skieur.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                            continue;
+                        }
+
+                        SkierPOJO skier = SkierPOJO.findByNameAndSurname(nom, prenom);
+                        JOptionPane.showMessageDialog(null, "Le skieur a été ajouté avec succès !");
+
+                        // Étape 7 : Récupérer les leçons disponibles
+                        List<LessonPOJO> lessons = LessonPOJO.getLessonsByAgeCategory(isChild);
+                        StringBuilder lessonsList = new StringBuilder("Leçons disponibles :\n");
+                        for (int i = 0; i < lessons.size(); i++) {
+                            lessonsList.append(i + 1).append(". ").append(lessons.get(i).getid()).append("\n");
+                        }
+
+                        String selectedLessonIndexStr = JOptionPane.showInputDialog(null, lessonsList.toString() + "Sélectionnez une leçon (numéro) :");
+                        int selectedLessonIndex = Integer.parseInt(selectedLessonIndexStr) - 1;
+
+                        // Étape 8 : Récupérer les instructeurs disponibles
+                        List<InstructorPOJO> instructors = InstructorPOJO.getAllInstructor();
+                        StringBuilder instructorsList = new StringBuilder("Instructeurs disponibles :\n");
+                        for (int i = 0; i < instructors.size(); i++) {
+                            instructorsList.append(i + 1).append(". ").append(instructors.get(i).getNom()).append("\n");
+                        }
+
+                        String selectedInstructorIndexStr = JOptionPane.showInputDialog(null, instructorsList.toString() + "Sélectionnez un instructeur (numéro) :");
+                        int selectedInstructorIndex = Integer.parseInt(selectedInstructorIndexStr) - 1;
+
+                        // Étape 9 : Récupérer les périodes disponibles
+                        List<PeriodPOJO> periods = PeriodPOJO.getAllPeriod();
+                        StringBuilder periodsList = new StringBuilder("Périodes disponibles :\n");
+                        for (int i = 0; i < periods.size(); i++) {
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            periodsList.append(i + 1).append(". ").append(sdf.format(periods.get(i).getStartDate()))
+                                       .append(" à ").append(sdf.format(periods.get(i).getEndDate())).append("\n");
+                        }
+
+                        String selectedPeriodIndexStr = JOptionPane.showInputDialog(null, periodsList.toString() + "Sélectionnez une période (numéro) :");
+                        int selectedPeriodIndex = Integer.parseInt(selectedPeriodIndexStr) - 1;
+
+                        // Étape 10 : Finaliser la réservation
+                        LessonPOJO selectedLesson = lessons.get(selectedLessonIndex);
+                        InstructorPOJO selectedInstructor = instructors.get(selectedInstructorIndex);
+                        PeriodPOJO selectedPeriod = periods.get(selectedPeriodIndex);
+                        String nomBooking = JOptionPane.showInputDialog("Nom de la réservation :");
+
+                        boolean bookingSuccess = BookingPOJO.AddBookingWithId(skier.getId(), selectedLesson.getid(), selectedInstructor.getId(), selectedPeriod.getid(), nomBooking);
+
+                        if (bookingSuccess) {
+                            JOptionPane.showMessageDialog(null, "Réservation réussie !");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Erreur lors de la réservation.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                        }
+
+                        break; // Sortir de la boucle après succès
+
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Erreur SQL : " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Une erreur inattendue est survenue : " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
                     }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Les champs nom et prénom sont obligatoires.");
                 }
             }
         });
+
 
         // Création du bouton pour le Booking
         btnCreateBooking.addActionListener(new ActionListener() {
