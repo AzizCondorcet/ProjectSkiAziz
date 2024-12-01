@@ -1,6 +1,8 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -8,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import BE.ouagueni.model.BookingPOJO;
 import BE.ouagueni.model.InstructorPOJO;
 import BE.ouagueni.model.SkierPOJO;
+import singleton.EcoleConnection;
 
 public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
 	
@@ -66,19 +70,112 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
                 }
             }
 
-            // Assigner la liste de certifications à l'instructeur
-            if (instructor != null) {
-                instructor.setCertifications(certifications);
-            } else {
-                System.out.println("No instructor found with name: " + name + " and surname: " + surname);
-            }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return instructor;
     }
     
+    public InstructorPOJO getInstructorById(int idInstru) {
+        InstructorPOJO instructor = null;
+        
+        // Requête SQL avec un paramètre lié
+        String query = "SELECT * FROM Instructor i WHERE id = ?";
+
+        try (PreparedStatement stmt = this.connect.prepareStatement(query)) {
+            // Lier le paramètre pour éviter les injections SQL
+            stmt.setInt(1, idInstru);
+            
+            try (ResultSet result = stmt.executeQuery()) {
+                while (result.next()) {
+                    if (instructor == null) {
+                        // Création de l'objet InstructorPOJO
+                        instructor = new InstructorPOJO();
+                        instructor.setId(result.getInt("id"));
+                        instructor.setNom(result.getString("nom"));
+                        instructor.setPrenom(result.getString("prenom"));
+                        instructor.setDateNaissance(result.getDate("dateNaissance"));
+                        instructor.setExperience(result.getInt("experience"));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return instructor;
+    }
+    
+    public List<InstructorPOJO> getAllInstructorsNotInBooking() {
+        List<InstructorPOJO> instructors = new ArrayList<>();
+        String query = """
+                SELECT * 
+                FROM Instructor i
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM Booking b
+                    WHERE b.instructor_id = i.id
+                )
+            """;
+
+        try (PreparedStatement statement = connect.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            // Parcours des résultats
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String nom = resultSet.getString("nom");
+                String prenom = resultSet.getString("prenom");
+                Date dateNaissance = resultSet.getDate("dateNaissance");
+                int experience = resultSet.getInt("experience");
+
+                // Création de l'objet InstructorPOJO avec les données récupérées
+                InstructorPOJO instructor = new InstructorPOJO(id, nom, prenom, dateNaissance, experience);
+                instructors.add(instructor);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return instructors; // Retourner la liste des instructeurs
+    }
+    
+    public List<InstructorPOJO> getAllInstructor() {
+        List<InstructorPOJO> instructors = new ArrayList<>();
+
+        // Récupération de la connexion depuis EcoleConnection
+        Connection connection = EcoleConnection.getInstance().getConnect();
+
+        // Requête pour récupérer tous les instructeurs
+        String query = "SELECT * FROM Instructor";
+
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            // Parcours des résultats
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String nom = resultSet.getString("nom");
+                String prenom = resultSet.getString("prenom");
+                Date dateNaissance = resultSet.getDate("dateNaissance");
+                int experience = resultSet.getInt("experience");
+
+                // Création d'un objet InstructorPOJO et ajout à la liste
+                InstructorPOJO instructor = new InstructorPOJO(id, nom, prenom, dateNaissance, experience);
+                instructors.add(instructor);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de l'exécution de getAllInstructor:");
+            e.printStackTrace();
+        }
+
+        return instructors;
+    }
 	@Override
 	public InstructorPOJO find(int id) {
 		// TODO Auto-generated method stub

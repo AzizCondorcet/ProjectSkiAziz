@@ -2,20 +2,41 @@ package BE.ouagueni.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import dao.PeriodDAO;
+import dao.SkierDAO;
+import singleton.EcoleConnection;
+
 public class PeriodPOJO implements Serializable {
+	private int id;
     private Date startDate;
     private Date endDate;
     private boolean isVacation;
     
-	public PeriodPOJO(Date startDate, Date endDate, boolean isVacation) {
+	public PeriodPOJO(int id,Date startDate, Date endDate, boolean isVacation) {
 		super();
+		this.id=id;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.isVacation = isVacation;
 	}
+	public PeriodPOJO() {
+		super();
+	}
 
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public int getid()
+	{
+		return id;
+	}
+	
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -42,8 +63,12 @@ public class PeriodPOJO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "PeriodPOJO [startDate=" + startDate + ", endDate=" + endDate + ", isVacation=" + isVacation + "]";
+	    return String.format(
+	        "Period: [Start Date: %s, End Date: %s, Vacation: %s]",
+	        startDate, endDate, isVacation ? "Yes" : "No"
+	    );
 	}
+
 
 	@Override
 	public int hashCode() {
@@ -62,6 +87,18 @@ public class PeriodPOJO implements Serializable {
 		return Objects.equals(endDate, other.endDate) && isVacation == other.isVacation
 				&& Objects.equals(startDate, other.startDate);
 	}
+    public static List<PeriodPOJO> getAllPeriodNotInBooking() {
+        PeriodDAO PeriodDAO = new PeriodDAO(EcoleConnection.getInstance().getConnect());
+        return PeriodDAO.getAllPeriodNotInBooking(); 
+    }
+    public static List<PeriodPOJO> getAllPeriod() {
+        PeriodDAO PeriodDAO = new PeriodDAO(EcoleConnection.getInstance().getConnect());
+        return PeriodDAO.getAllPeriod(); 
+    }
+    public static PeriodPOJO getPeriodById(int idPeriod) {
+    	PeriodDAO PeriodDAO = new PeriodDAO(EcoleConnection.getInstance().getConnect());
+        return PeriodDAO.getPeriodById(idPeriod); 
+    }
     
 }
 
