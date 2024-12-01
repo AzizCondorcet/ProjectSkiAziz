@@ -36,10 +36,10 @@ public class InstructorPOJO extends PersonnePOJO {
 
 	@Override
 	public String toString() {
-		return "InstructorPOJO [experience=" + experience  + ", getId()="
-				+ getId() + ", getNom()=" + getNom() + ", getPrenom()=" + getPrenom() + ", getDateNaissance()="
-				+ getDateNaissance() + ", toString()=" + super.toString() + ", hashCode()=" + hashCode()
-				+ ", getClass()=" + getClass() + "]";
+	    return String.format(
+	        "Instructor: [ID: %d, Name: %s %s, Birthdate: %s, Experience: %d years]",
+	        getId(), getNom(), getPrenom(), getDateNaissance(), experience
+	    );
 	}
 
 	@Override

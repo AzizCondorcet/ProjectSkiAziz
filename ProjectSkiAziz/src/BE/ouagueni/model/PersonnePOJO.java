@@ -59,8 +59,15 @@ public abstract class PersonnePOJO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Personne [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", dateNaissance=" + dateNaissance + "]";
+	    return String.format(
+	        "Personne: [ID: %d, Nom: %s, Prénom: %s, Date de Naissance: %s]",
+	        id,
+	        nom,
+	        prenom,
+	        dateNaissance
+	    );
 	}
+
 
 	@Override
 	public int hashCode() {

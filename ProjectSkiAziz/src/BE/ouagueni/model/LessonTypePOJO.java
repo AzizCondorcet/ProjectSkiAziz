@@ -53,8 +53,9 @@ public class LessonTypePOJO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "LessonTypePOJO [level=" + level + ", price=" + price + "]";
+	    return String.format("Lesson Type: [Level: %s, Price: %.2f€]", level, price);
 	}
+
 
 	@Override
 	public int hashCode() {

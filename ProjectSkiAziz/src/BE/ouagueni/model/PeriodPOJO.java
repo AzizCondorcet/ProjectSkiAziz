@@ -63,8 +63,12 @@ public class PeriodPOJO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "PeriodPOJO [startDate=" + startDate + ", endDate=" + endDate + ", isVacation=" + isVacation + "]";
+	    return String.format(
+	        "Period: [Start Date: %s, End Date: %s, Vacation: %s]",
+	        startDate, endDate, isVacation ? "Yes" : "No"
+	    );
 	}
+
 
 	@Override
 	public int hashCode() {

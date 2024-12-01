@@ -42,8 +42,14 @@ public class SkierPOJO extends PersonnePOJO {
 
     @Override
     public String toString() {
-        return super.toString() + ", Skier [niveau=" + niveau + ", assurance=" + assurance + "]";
+        return String.format(
+            "Skier: [Niveau: %s, Assurance: %s, %s]",
+            niveau,
+            assurance ? "Oui" : "Non",
+            super.toString()
+        );
     }
+
 
     @Override
     public int hashCode() {
