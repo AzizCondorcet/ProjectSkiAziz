@@ -65,7 +65,7 @@ public class SkierDAO extends DAO_Generique<SkierPOJO> {
         String query = "SELECT * FROM Skier WHERE id = ?";
         
         try (PreparedStatement stmt = this.connect.prepareStatement(query)) {
-            stmt.setInt(1, idSkier);   // Remplace le premier '?' par 'idSkier'
+            stmt.setInt(1, idSkier);  
             
             ResultSet result = stmt.executeQuery();
             
@@ -84,6 +84,7 @@ public class SkierDAO extends DAO_Generique<SkierPOJO> {
         
         return skier;
     }
+    
     public boolean NewSkier(String Nom, String Prenom, java.util.Date date, String Niveau, boolean Assurance) {
         boolean success = false; // Initialiser le succès à faux
         try {
@@ -109,7 +110,7 @@ public class SkierDAO extends DAO_Generique<SkierPOJO> {
             PreparedStatement insertStmt = this.connect.prepareStatement(insertQuery);
             insertStmt.setString(1, Nom);  // Utilisation des paramètres passés à la méthode
             insertStmt.setString(2, Prenom);
-            insertStmt.setDate(3, new java.sql.Date(date.getTime()));  // Convertir la Date Java en SQL Date
+            insertStmt.setDate(3, new java.sql.Date(date.getTime())); // Convertir la Date Java en SQL Date
             insertStmt.setString(4, Niveau);  // Le niveau du skieur
             insertStmt.setBoolean(5, Assurance);  // Assurance en tant que booléen (true/false)
 

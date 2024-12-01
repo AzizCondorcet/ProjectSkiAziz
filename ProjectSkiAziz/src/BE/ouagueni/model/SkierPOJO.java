@@ -1,5 +1,6 @@
 package BE.ouagueni.model;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -57,6 +58,21 @@ public class SkierPOJO extends PersonnePOJO {
             return false;
         SkierPOJO other = (SkierPOJO) obj;
         return assurance == other.assurance && Objects.equals(niveau, other.niveau);
+    }
+    public static boolean isUnder18(Date dateNaissance) {
+        Calendar birthDate = Calendar.getInstance();
+        birthDate.setTime(dateNaissance);
+
+        Calendar today = Calendar.getInstance();
+
+        int age = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
+
+        // Si l'anniversaire n'est pas encore passé cette année, soustraire 1 à l'âge
+        if (today.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+
+        return age < 18;
     }
     
     public static boolean checkIfPersonExists(String name, String surname)

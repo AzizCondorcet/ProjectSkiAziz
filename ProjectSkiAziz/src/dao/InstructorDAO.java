@@ -13,6 +13,7 @@ import java.util.List;
 import BE.ouagueni.model.BookingPOJO;
 import BE.ouagueni.model.InstructorPOJO;
 import BE.ouagueni.model.SkierPOJO;
+import singleton.EcoleConnection;
 
 public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
 	
@@ -145,20 +146,17 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
     
     public List<InstructorPOJO> getAllInstructor() {
         List<InstructorPOJO> instructors = new ArrayList<>();
-        String query = "SELECT * FROM Instructor i";
-        System.out.println("3.6");
-        // Assurez-vous que la connexion reste ouverte durant l'exécution
-        try (PreparedStatement statement = connect.prepareStatement(query);
-                ResultSet resultSet = statement.executeQuery()) {
-        	if (connect == null || connect.isClosed()) {
-        	    throw new SQLException("La connexion est fermée ou nulle");
-        	}
-        	System.out.println("3.5");
-        	if (connect == null || connect.isClosed()) {
-        	    throw new SQLException("La connexion est fermée ou nulle");
-        	}
-        	System.out.println("3");
-        	System.out.println("Connexion ouverte ? " + !connect.isClosed());
+
+        // Récupération de la connexion depuis EcoleConnection
+        Connection connection = EcoleConnection.getInstance().getConnect();
+
+        // Requête pour récupérer tous les instructeurs
+        String query = "SELECT * FROM Instructor";
+
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            // Parcours des résultats
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String nom = resultSet.getString("nom");
@@ -166,17 +164,18 @@ public class InstructorDAO extends DAO_Generique<InstructorPOJO> {
                 Date dateNaissance = resultSet.getDate("dateNaissance");
                 int experience = resultSet.getInt("experience");
 
+                // Création d'un objet InstructorPOJO et ajout à la liste
                 InstructorPOJO instructor = new InstructorPOJO(id, nom, prenom, dateNaissance, experience);
                 instructors.add(instructor);
             }
 
         } catch (SQLException e) {
+            System.err.println("Erreur lors de l'exécution de getAllInstructor:");
             e.printStackTrace();
         }
+
         return instructors;
     }
-
-    
 	@Override
 	public InstructorPOJO find(int id) {
 		// TODO Auto-generated method stub

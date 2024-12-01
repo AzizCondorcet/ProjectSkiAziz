@@ -23,17 +23,28 @@ public class BookingDAO  extends DAO_Generique<SkierPOJO>{
     // Méthode pour récupérer toutes les réservations
     public List<BookingPOJO> getAllBookings() {
         List<BookingPOJO> bookings = new ArrayList<>();
-        String query = "SELECT id, dateReservation, nombreParticipants,nomBooking FROM Booking";
+        String query = "SELECT id, dateReservation, nombreParticipants, lesson_id, instructor_id, skier_id, period_id, nomBooking FROM Booking";
 
-        try (PreparedStatement stmt = connection.prepareStatement(query)) { // Utilisez le champ `connection` ici
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt("id");
                 Date dateReservation = rs.getDate("dateReservation");
                 int nombreParticipants = rs.getInt("nombreParticipants");
-                String NomBooking = rs.getString("nomBooking");
+                int lessonId = rs.getInt("lesson_id");
+                int instructorId = rs.getInt("instructor_id");
+                int skierId = rs.getInt("skier_id");
+                int periodId = rs.getInt("period_id");
+                String nomBooking = rs.getString("nomBooking");
 
-                BookingPOJO booking = new BookingPOJO(id, dateReservation, nombreParticipants,NomBooking);
+                // Récupérer les objets associés avec les IDs
+                LessonPOJO lesson = LessonPOJO.getLessonById(lessonId);
+                InstructorPOJO instructor = InstructorPOJO.getInstructorById(instructorId);
+                SkierPOJO skier = SkierPOJO.getSkierById(skierId);
+                PeriodPOJO period = PeriodPOJO.getPeriodById(periodId);
+
+                // Créer l'objet BookingPOJO avec les objets récupérés
+                BookingPOJO booking = new BookingPOJO(id, dateReservation, nombreParticipants, nomBooking, lesson, instructor, skier, period);
                 bookings.add(booking);
             }
         } catch (SQLException e) {

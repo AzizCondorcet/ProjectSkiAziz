@@ -9,24 +9,28 @@ public class EcoleConnection {
     private Connection connect;
 
     private EcoleConnection() {
+        // Crée une connexion initiale
+        createConnection();
+    }
+
+    private void createConnection() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             String url = "jdbc:oracle:thin:@//193.190.64.10:1522/xepdb1";
-            String username = "STUDENT03_08"; 
-            String password = "changeme"; 
+            String username = "STUDENT03_08";
+            String password = "changeme";
             this.connect = DriverManager.getConnection(url, username, password);
-            if (this.connect != null) 
-            {
+
+            if (this.connect != null) {
                 System.out.println("Connected to: " + this.connect.getMetaData().getURL());
                 System.out.println("Database User: " + this.connect.getMetaData().getUserName());
-                System.out.println("Connected to database: " + this.connect.getMetaData().getURL());
             } else {
                 System.out.println("Connection is null!");
             }
         } catch (ClassNotFoundException e) {
-            e.printStackTrace(); // Gérer l'exception si le driver n'est pas trouvé
+            e.printStackTrace(); // Gestion de l'erreur si le driver JDBC n'est pas trouvé
         } catch (SQLException e) {
-            e.printStackTrace(); // Gérer les erreurs SQL
+            e.printStackTrace(); // Gestion des erreurs SQL
         }
     }
 
@@ -38,6 +42,17 @@ public class EcoleConnection {
     }
 
     public Connection getConnect() {
+        try {
+            // Vérifiez si la connexion est toujours valide
+            if (connect == null || connect.isClosed()) {
+                System.out.println("Connection is closed or null. Reopening...");
+                createConnection(); // Réouvre la connexion si elle est fermée
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la vérification de la connexion :");
+            e.printStackTrace();
+            createConnection(); // Réessaye d'ouvrir la connexion en cas d'échec
+        }
         return connect;
     }
 }

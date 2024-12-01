@@ -57,8 +57,8 @@ public class LessonTypeDAO extends DAO_Generique<InstructorPOJO> {
 	                double price = resultSet.getDouble("price");
 
 	                BigDecimal priceBigDecimal = BigDecimal.valueOf(price);  // Conversion du double en BigDecimal
-	                LessonTypePOJO lessonType = new LessonTypePOJO(level, priceBigDecimal);
-	                lessonType.setId(id); // Assurez-vous d'avoir un champ `id` dans LessonTypePOJO.
+	                LessonTypePOJO lessonType = new LessonTypePOJO(id,level, priceBigDecimal);
+	                /* lessonType.setId(id); // Assurez-vous d'avoir un champ `id` dans LessonTypePOJO.*/
 	                lessonTypes.add(lessonType);
 	            }
 	        } catch (SQLException e) {
@@ -84,10 +84,10 @@ public class LessonTypeDAO extends DAO_Generique<InstructorPOJO> {
 		            String level = resultSet.getString("lesson_level");
 		            BigDecimal price = resultSet.getBigDecimal("price");
 
-		            lessonType = new LessonTypePOJO();
-		            lessonType.setId(id);
+		            lessonType = new LessonTypePOJO(id,level,price);
+		            /*lessonType.setId(id);
 		            lessonType.setLevel(level);
-		            lessonType.setPrice(price);
+		            lessonType.setPrice(price);*/
 		        }
 
 		    } catch (SQLException e) {

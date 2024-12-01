@@ -39,6 +39,16 @@ public class BookingPOJO implements Serializable {
         this.NomBooking = nomBooking;
     }
 
+	public BookingPOJO(int id,java.util.Date Date,int nombreParticipants,String nomBooking, LessonPOJO lesson,InstructorPOJO instructor,SkierPOJO skier, PeriodPOJO period) {
+        this.id=id;
+		this.dateReservation=Date;
+        this.nombreParticipants = nombreParticipants;
+        this.NomBooking = nomBooking;
+        this.lesson = lesson;
+        this.instructor = instructor;
+		this.skier = skier;
+        this.period = period;
+    }
 	public void setNomBooking(String nomBooking) {
 		NomBooking = nomBooking;
 	}
@@ -103,11 +113,26 @@ public class BookingPOJO implements Serializable {
     	return NomBooking;
     }
 
-	@Override
-	public String toString() {
-		return "BookingPOJO [id=" + id + ", dateReservation=" + dateReservation + ", nombreParticipants="
-				+ nombreParticipants + "]";
-	}
+    @Override
+    public String toString() {
+        return String.format("Booking Details:\n" +
+                             "  - ID: %d\n" +
+                             "  - Nom de la réservation: %s\n" +
+                             "  - Date de Réservation: %s\n" +
+                             "  - Nombre de Participants: %d\n" +
+                             "  - Skieur: %s\n" +
+                             "  - Instructeur: %s\n" +
+                             "  - Leçon: %s\n" +
+                             "  - Période: %s",
+                             id, 
+                             NomBooking, 
+                             dateReservation, 
+                             nombreParticipants,
+                             skier != null ? skier.toString() : "Aucun skieur",
+                             instructor != null ? instructor.toString() : "Aucun instructeur",
+                             lesson != null ? lesson.toString() : "Aucune leçon",
+                             period != null ? period.toString() : "Aucune période");
+    }
 
 	@Override
 	public int hashCode() {
@@ -127,10 +152,7 @@ public class BookingPOJO implements Serializable {
 				&& nombreParticipants == other.nombreParticipants;
 	}
 	public static List<BookingPOJO> getAllBookings() {
-        // Création d'une instance de BookingDAO
         BookingDAO bookingDAO = new BookingDAO(EcoleConnection.getInstance().getConnect());
-
-        // Appel de la méthode getAllBookings() du BookingDAO pour récupérer les réservations
         return bookingDAO.getAllBookings();
     }
 	public void createBooking() {

@@ -63,17 +63,17 @@ public class LessonDAO extends DAO_Generique<InstructorPOJO> {
     public static List<LessonPOJO> getLessonsByAgeCategory(boolean isChild) {
         List<LessonPOJO> filteredLessons = new ArrayList<>();
         try (Connection connection = EcoleConnection.getInstance().getConnect()) {
-            String sql = "SELECT l.*, lt.id AS lt_id, lt.lesson_level AS lt_level, "
-                       + "lt.price AS lt_price, i.id AS i_id, i.nom AS i_nom, i.prenom AS i_prenom, "
-                       + "i.dateNaissance AS i_dateNaissance, i.experience AS i_experience "
-                       + "l.lesson_date AS lesson_date " 
-                       + "FROM Lesson l "
-                       + "JOIN LessonType lt ON l.lessonType_id = lt.id "
-                       + "JOIN Instructor i ON l.instructor_id = i.id "
-                       + "WHERE lt.id BETWEEN ? AND ?";
+        	String sql = "SELECT l.*, lt.id AS lt_id, lt.lesson_level AS lt_level, "
+        	           + "lt.price AS lt_price, i.id AS i_id, i.nom AS i_nom, i.prenom AS i_prenom, "
+        	           + "i.dateNaissance AS i_dateNaissance, i.experience AS i_experience, " // Ajout de la virgule ici
+        	           + "l.lesson_date AS lesson_date " 
+        	           + "FROM Lesson l "
+        	           + "JOIN LessonType lt ON l.lessonType_id = lt.id "
+        	           + "JOIN Instructor i ON l.instructor_id = i.id "
+        	           + "WHERE lt.id BETWEEN ? AND ?";
             
             PreparedStatement ps = connection.prepareStatement(sql);
-            
+            System.out.println(isChild);
             if (isChild) {
                 ps.setInt(1, 1);  // IDs pour niveaux enfants
                 ps.setInt(2, 11);  // Fin des niveaux enfants

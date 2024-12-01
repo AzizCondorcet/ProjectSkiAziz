@@ -27,7 +27,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-public class PartieGraphique extends JFrame {
+public class PartieGraphique2 extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
