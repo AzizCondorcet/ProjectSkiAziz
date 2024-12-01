@@ -33,7 +33,7 @@ public class PartieGraphique extends JFrame {
     private JPanel contentPane;
 
     public PartieGraphique() {
-        setTitle("Gestion École de Ski");
+        setTitle("Gestionn École de Ski");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 600, 500);  // Augmenter la taille de la fenêtre
         setLocationRelativeTo(null);  // Centrer la fenêtre
